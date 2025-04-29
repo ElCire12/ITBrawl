@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Marti_Animation_Override
+  m_Controller: {fileID: 9100000, guid: 95d16574263ec0d4985ef3155b52d43a, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -7703716553714274601, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
+      type: 3}
+    m_OverrideClip: {fileID: -7703716553714274601, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
+      type: 3}
+  - m_OriginalClip: {fileID: 1185065713615557994, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
+      type: 3}
+    m_OverrideClip: {fileID: 1185065713615557994, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
+      type: 3}
+  - m_OriginalClip: {fileID: -1812440172805321714, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
+      type: 3}
+    m_OverrideClip: {fileID: -1812440172805321714, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
+      type: 3}
+  - m_OriginalClip: {fileID: -6183346920880654375, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
+      type: 3}
+    m_OverrideClip: {fileID: -6183346920880654375, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
+      type: 3}
