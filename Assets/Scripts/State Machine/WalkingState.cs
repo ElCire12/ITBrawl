@@ -26,15 +26,15 @@ public class WalkingState : PlayerState
 
     public override void FixedUpdate()
     {
-        if (Mathf.Abs(context.movementInput.x) > 0.3f)
+        if (Mathf.Abs(context.movementInput.x) > 0.3f) //El jugador está en moviment 
         {
-            if (DidPlayerFlip()) // Code to execute when player flipped
+            if (DidPlayerFlip()) // Codi a executar quan el jugador fa un flip 
             {
                 context.rb.velocity = Vector2.zero; //Stop Player
-                //context.rb.velocity = new Vector2(-context.rb.velocity.x, context.rb.velocity.y); //Mantain the velocity
  
                 context.animator.Play("PlayerFlip");
 
+                //Girar al jugador
                 if (context.movementInput.x > 0)
                 {
                     context.visuals.eulerAngles = new Vector3(0f, 90f, 0f);
@@ -45,7 +45,7 @@ public class WalkingState : PlayerState
                 }
             }
 
-            context.rb.AddForce( new Vector2 (context.movementInput.x, 0) * context.acceleration * Mathf.Abs(context.movementInput.x), ForceMode.Force);
+            context.rb.AddForce(new Vector2 (context.movementInput.x, 0) * context.acceleration, ForceMode.Force);
 
             if (context.rb.velocity.magnitude > context.maxSpeed) // Limit player velocity
             {
@@ -71,19 +71,5 @@ public class WalkingState : PlayerState
         }
 
         else { return false; }
-
-        //float playerDirectionSign = Mathf.Sign(context.rb.velocity.x);
-        //float inputSign = Mathf.Sign(context.movementInput.x);
-
-        //if (playerDirectionSign != inputSign)
-        //{
-        //    return true;
-        //}
-        //else if (context.GetActualPlayerDirection() == 1 && inputSign == -1 || context.GetActualPlayerDirection() == -1 && inputSign == 1)
-        //{
-        //    return true;
-        //}
-
-        //else { return false; }
     }
 }

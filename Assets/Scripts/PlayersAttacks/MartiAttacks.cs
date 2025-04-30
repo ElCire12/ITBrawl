@@ -15,6 +15,10 @@ public class MartiAttacks : CharacterAttack
     public Transform bocataSpawnPoint; 
     public ParticleSystem legoParticles;
 
+    public float specialDownaAffectArea = 3f;
+    public int specialDownDamage = 50;
+    public LayerMask enemyLayer;
+
 
     bool alredyJumped = false; 
     public override void FrontalAttack()
@@ -64,6 +68,17 @@ public class MartiAttacks : CharacterAttack
             legoParticles.transform.position = transform.position;
             legoParticles.Play();
 
+            //Activar hitted area
+            Collider[] hits = Physics.OverlapSphere(transform.position, specialDownaAffectArea, enemyLayer);
+            
+            foreach (Collider hit in hits)
+            {
+                if (hit.gameObject != this.gameObject)
+                {
+                    hit.GetComponent<PlayerLive>()?.TakeDamage(specialDownDamage);
+                }
+            }
+
             //Dejar de estar en estado atacando 
             yield return new WaitForSeconds(1f);
             context.isAttacking = false;
@@ -80,4 +95,10 @@ public class MartiAttacks : CharacterAttack
     {
 
     }
+
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawWireSphere(transform.position, specialDownaAffectArea);
+    //}
 }

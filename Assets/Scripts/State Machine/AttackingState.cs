@@ -17,8 +17,6 @@ public class AttackingState : PlayerState
         //Ataque Frontal
         else if (context.movementInput.y > -0.5f && context.movementInput.y < 0.5f) 
         {   
-        
-
             //Reproducir logica
             context.characterAttacks.FrontalAttack(); 
         }

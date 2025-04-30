@@ -1,0 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public interface IDamageable
+{
+    void TakeDamage(int amount, GameObject source);
+    void Heal(int amount);
+}
+

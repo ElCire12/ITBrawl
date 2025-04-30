@@ -31,6 +31,7 @@ public class AirState : PlayerState
 
     public override void FixedUpdate()
     {
+        context.animator.SetFloat("YVelocity", context.rb.velocity.y);
         //Detect double jump
         if (jumpNextFrame && jumpsCount < context.maxAirJumps && context.previousState != "AttackingState")
         {
@@ -40,11 +41,11 @@ public class AirState : PlayerState
             jumpNextFrame= false;   
         }
 
-        // Si ya no tiene mas saltos
-        if (jumpsCount >= context.maxAirJumps)
-        {
-            context.animator.SetBool("air_stunned", true);
-        }
+        //// Si ya no tiene mas saltos
+        //if (jumpsCount >= context.maxAirJumps)
+        //{
+        //    context.animator.SetBool("air_stunned", true);
+        //}
         else
         {
             //Rotate player in the air

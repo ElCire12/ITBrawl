@@ -68,7 +68,6 @@ public class PlayerStateManager : MonoBehaviour
         playerInput.actions.Enable();
         //jumpAction.Enable();
         jumpAction.started += ctx => {
-            Debug.Log("Jump Start");
             jumpStarted = true;
         };
     }
@@ -98,6 +97,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (currentState == null) return;
 
+        #region
         //ONLY IN DEVELOPMENT
         playerstate = currentState.ToString();
 
@@ -106,8 +106,8 @@ public class PlayerStateManager : MonoBehaviour
             transform.position = initialPosition;
             rb.velocity = Vector2.zero;
         }
-
         animator.SetBool("is_grounded", isGrounded);
+        #endregion
 
         //MAIN PROGRAM
         ReadPlayerInput();
@@ -165,7 +165,6 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (currentState != null && states[newStateName] == currentState) return;
 
-        //if (currentState != null) 
         previousState = currentState.ToString();
 
         currentState?.Exit();
