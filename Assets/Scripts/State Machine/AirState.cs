@@ -32,20 +32,17 @@ public class AirState : PlayerState
     public override void FixedUpdate()
     {
         context.animator.SetFloat("YVelocity", context.rb.velocity.y);
+        
         //Detect double jump
         if (jumpNextFrame && jumpsCount < context.maxAirJumps && context.previousState != "AttackingState")
         {
             context.rb.velocity = Vector3.zero;
             context.rb.AddForce(new Vector2(0, 1 * context.jumpForce), ForceMode.Impulse);
+            SoundManager.Instance.PlaySound(context.jumpSound, true);
             jumpsCount++;
             jumpNextFrame= false;   
         }
 
-        //// Si ya no tiene mas saltos
-        //if (jumpsCount >= context.maxAirJumps)
-        //{
-        //    context.animator.SetBool("air_stunned", true);
-        //}
         else
         {
             //Rotate player in the air
@@ -73,7 +70,6 @@ public class AirState : PlayerState
         if (Mathf.Abs(context.rb.velocity.x) > context.airMaxSpeed) // Limit player velocity
         {
             context.rb.velocity = new Vector2(context.airMaxSpeed * Mathf.Sign(context.rb.velocity.x), context.rb.velocity.y);
-            //context.rb.velocity = context.rb.velocity.normalized * context.maxSpeed;
         }
 
         jumpNextFrame = false;

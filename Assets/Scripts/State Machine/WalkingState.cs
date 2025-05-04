@@ -26,15 +26,24 @@ public class WalkingState : PlayerState
 
     public override void FixedUpdate()
     {
-        if (Mathf.Abs(context.movementInput.x) > 0.3f) //El jugador está en moviment 
+        if (Mathf.Abs(context.movementInput.x) > 0.3f) //El jugador está en moviment
         {
             if (DidPlayerFlip()) // Codi a executar quan el jugador fa un flip 
             {
                 context.rb.velocity = Vector2.zero; //Stop Player
- 
+
                 context.animator.Play("PlayerFlip");
 
                 //Girar al jugador
+                if (context.movementInput.x > 0)
+                {
+                    context.visuals.eulerAngles = new Vector3(0f, 90f, 0f);
+                }
+                else if (context.movementInput.x < 0)
+                {
+                    context.visuals.eulerAngles = new Vector3(0f, -90f, 0f);
+                }
+
                 if (context.movementInput.x > 0)
                 {
                     context.visuals.eulerAngles = new Vector3(0f, 90f, 0f);

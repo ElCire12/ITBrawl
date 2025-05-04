@@ -1,11 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.VirtualTexturing;
 
 public class MartiAttacks : CharacterAttack
 {
     [Header("Special Up / Gorra")]
-    public float gorraJumpForce; 
+    public float gorraJumpForce;
+    [SerializeField] private int specialUpDamage;
+    public AudioClip[] specialUpSounds;
+
+    public override int SpecialUpDamage => specialUpDamage;
+    public Collider specialUpHurtBox;
 
     [Header("Special Frontal / Bocata")]
     public float bocataForce; 
@@ -18,9 +24,8 @@ public class MartiAttacks : CharacterAttack
     public float specialDownaAffectArea = 3f;
     public int specialDownDamage = 50;
     public LayerMask enemyLayer;
+    
 
-
-    bool alredyJumped = false; 
     public override void FrontalAttack()
     {
         IEnumerator Coroutine()
@@ -44,12 +49,21 @@ public class MartiAttacks : CharacterAttack
     {
         IEnumerator Coroutine()
         {
+            //Start animation
             context.isAttacking = true;
             context.rb.velocity = Vector2.zero;
+            context.animator.SetTrigger("special_up");
+            context.rb.constraints |= RigidbodyConstraints.FreezePositionY;
 
+            yield return new WaitForSeconds(0.58f + 0.25f);
+            context.rb.constraints &= ~RigidbodyConstraints.FreezePositionY;
+            //Add jump and enable hurtbox
+            specialUpHurtBox.enabled = true;
             context.rb.AddForce(new Vector2(0, 1 * gorraJumpForce), ForceMode.Impulse);
+            SoundManager.Instance.PlayRandomSound(specialUpSounds); 
 
             yield return new WaitForSeconds(1f);
+            specialUpHurtBox.enabled = false;
             context.isAttacking = false;
         }
         StartCoroutine(Coroutine());

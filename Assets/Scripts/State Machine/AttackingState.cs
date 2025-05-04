@@ -37,17 +37,7 @@ public class AttackingState : PlayerState
 
     public override void Update()
     {
-        //AnimatorStateInfo state = context.animator.GetCurrentAnimatorStateInfo(0);
 
-        //Debug.Log(state.ToString());
-        //if (state.IsName("SpecialUp"))
-        //{
-        //    if (state.normalizedTime >= 1f)
-        //    {
-        //        Debug.Log("Animation finished"); 
-        //        context.isAttacking = false;
-        //    }
-        //}
     }
 
     public override void FixedUpdate()

@@ -50,6 +50,9 @@ public class PlayerStateManager : MonoBehaviour
     public Rigidbody rb;
     public Transform visuals;
 
+    [Header("Sounds")]
+    public AudioClip jumpSound; 
+
     private Vector2 initialPosition;
     public bool isStunned = false;
 
@@ -87,7 +90,7 @@ public class PlayerStateManager : MonoBehaviour
             { "Walking", new WalkingState(this) },
             { "Jump", new JumpState(this)},
             { "Air", new AirState(this)},
-            { "SpecialAttack", new AttackingState(this)}
+            { "AttackingState", new AttackingState(this)}
         };
 
         currentState = new IdleState(this);
@@ -134,9 +137,11 @@ public class PlayerStateManager : MonoBehaviour
         if (!isGrounded)
         {
             ChangeState("Air");
-            if (specialAttackPressed && movementInput.y > 0.5f)
+
+            if (specialAttackPressed && movementInput.y > 0.5f && previousState != "AttackingState")
             {
-                ChangeState("SpecialAttack");
+                Debug.Log("Enter special attack"); 
+                ChangeState("AttackingState");
             }
         }
 
@@ -144,7 +149,7 @@ public class PlayerStateManager : MonoBehaviour
         {
             if (specialAttackPressed)
             {
-                ChangeState("SpecialAttack");
+                ChangeState("AttackingState");
             }
             else if (jumpStarted)
             {

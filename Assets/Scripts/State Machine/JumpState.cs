@@ -8,6 +8,7 @@ public class JumpState : PlayerState
     public override void Enter()
     {
         context.rb.AddForce(new Vector2(0, 1 * context.jumpForce), ForceMode.Impulse);
+        SoundManager.Instance.PlaySound(context.jumpSound, true);
         context.animator.SetTrigger("jump");
     }
 
