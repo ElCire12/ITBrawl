@@ -5008,6 +5008,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxLive: 300
   currentLive: 0
+  playerStateManager: {fileID: 4517308162649213434}
 --- !u!114 &327610043922249304
 MonoBehaviour:
   m_ObjectHideFlags: 0

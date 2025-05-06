@@ -7,6 +7,8 @@ public class GamePlaySceneManager : MonoBehaviour
 {
     void Start()
     {
+        //RenderSettings.skybox = yourSkyboxMaterial;
+        DynamicGI.UpdateEnvironment();
 
         foreach (var device in InputSystem.devices)
         {

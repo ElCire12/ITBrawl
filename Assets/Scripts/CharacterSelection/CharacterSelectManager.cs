@@ -21,7 +21,7 @@ public class CharacterSelectManager : MonoBehaviour
     PlayerInfo playerSelecting = null; 
 
     private InputAction joinAction;
-    private const int maxPlayers = 2;
+    public int maxPlayers = 3;
 
     public enum selectingStates
     {
@@ -108,7 +108,6 @@ public class CharacterSelectManager : MonoBehaviour
 
     void DisableAllDevicesExcept(InputDevice deviceException)
     {
-        Debug.Log($"Devices Disabled except {deviceException}"); 
         foreach (var device in InputSystem.devices)
         {
             if (device == deviceException)

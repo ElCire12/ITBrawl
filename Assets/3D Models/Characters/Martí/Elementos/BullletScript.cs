@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BullletScript : MonoBehaviour
 {
+    public GameObject parent;
     public float liveTime;
     public int damage;
 
@@ -21,12 +22,15 @@ public class BullletScript : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        PlayerLive playerLiveScript = other.gameObject.GetComponent<PlayerLive>();
-
-        if (playerLiveScript != null)
+        if (other.gameObject != parent)
         {
-            playerLiveScript.TakeDamage(damage);
+            PlayerLive playerLiveScript = other.gameObject.GetComponent<PlayerLive>();
+
+            if (playerLiveScript != null)
+            {
+                playerLiveScript.TakeDamage(damage, 0.3f, parent.transform);
+            }
+            Destroy(this.gameObject);
         }
-        Destroy(this.gameObject);
     }
 }

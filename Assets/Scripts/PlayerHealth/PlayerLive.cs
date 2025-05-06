@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PlayerLive : MonoBehaviour
 {
     public int maxLive;
     public int currentLive;
+    public PlayerStateManager playerStateManager;
 
     private void Awake()
     {
@@ -20,9 +22,21 @@ public class PlayerLive : MonoBehaviour
         else { currentLive += liveAmount; }
     }
 
-    public void TakeDamage(int liveAmount)
+    public void TakeDamage(int liveAmount, float stunTime = 0, Transform attackerPosition = null)
     {
-        if ((currentLive - liveAmount) <= 0f)
+        playerStateManager.ApplyStun(stunTime);
+
+        if (attackerPosition != null) {
+            
+            float direction;
+            if (attackerPosition.position.x < transform.position.x) direction = 1; else direction = -1;
+
+            playerStateManager.visuals.eulerAngles = new Vector3(0f, 90f * -direction, 0f);
+
+            playerStateManager.rb.AddForce(new Vector2(direction * 300, 1 * 50), ForceMode.Impulse);
+        }
+
+        if ((currentLive - liveAmount) <= 0f) //Comprobar si ha deixat sense vida al jugador
         {
             currentLive = 0; 
             Die();

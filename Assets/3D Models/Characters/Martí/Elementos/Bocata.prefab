@@ -212,6 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c32b8d43b4913d94d910f1a08943c902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  parent: {fileID: 0}
   liveTime: 5
   damage: 15
   afectMask:

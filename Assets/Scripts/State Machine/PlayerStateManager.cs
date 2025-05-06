@@ -131,8 +131,8 @@ public class PlayerStateManager : MonoBehaviour
 
     void DecideNextState()
     {
-        if (isStunned) return;
         if (isAttacking) return;
+        if (isStunned) return;
 
         if (!isGrounded)
         {
@@ -215,5 +215,14 @@ public class PlayerStateManager : MonoBehaviour
             Debug.LogError("No se esta detectando bien la dirección del jugador");
             return 0;
         }
+    }
+
+    public void ApplyStun(float duration)
+    {
+        if (duration == 0) return;
+
+        currentState?.Exit();
+        currentState = new StunnedState(this, duration);
+        currentState.Enter();
     }
 }

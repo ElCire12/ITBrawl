@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.VirtualTexturing;
 
 public class MartiAttacks : CharacterAttack
 {
@@ -22,6 +21,7 @@ public class MartiAttacks : CharacterAttack
     public ParticleSystem legoParticles;
 
     public float specialDownaAffectArea = 3f;
+    public float stunTime = 1f;
     public int specialDownDamage = 50;
     public LayerMask enemyLayer;
     
@@ -36,6 +36,7 @@ public class MartiAttacks : CharacterAttack
 
             yield return new WaitForSeconds(0.18f + 0.25f);
             GameObject bocata = Instantiate(bocataPrefab, bocataSpawnPoint.position, Quaternion.identity);
+            bocata.GetComponent<BullletScript>().parent = this.gameObject;
             Rigidbody rbBocata = bocata.GetComponent<Rigidbody>();
             rbBocata.AddForce(new Vector3(context.GetActualPlayerDirection(), 0, 0) * bocataForce, ForceMode.Impulse);
 
@@ -89,7 +90,7 @@ public class MartiAttacks : CharacterAttack
             {
                 if (hit.gameObject != this.gameObject)
                 {
-                    hit.GetComponent<PlayerLive>()?.TakeDamage(specialDownDamage);
+                    hit.GetComponent<PlayerLive>()?.TakeDamage(specialDownDamage, stunTime, transform);
                 }
             }
 
