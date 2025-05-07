@@ -155,7 +155,7 @@ public class PlayerStateManager : MonoBehaviour
             {
                 ChangeState("Jump");
             }
-            else if ( Mathf.Abs(movementInput.x) > 0.3f)
+            else if (Mathf.Abs(movementInput.x) > 0.3f)
             {
                 ChangeState("Walking");
             }

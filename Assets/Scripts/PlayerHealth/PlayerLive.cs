@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerLive : MonoBehaviour
 {
     public int maxLive;
     public int currentLive;
     public PlayerStateManager playerStateManager;
+    public Image healthBar; 
 
     private void Awake()
     {
@@ -20,6 +22,8 @@ public class PlayerLive : MonoBehaviour
             currentLive = maxLive;
         }
         else { currentLive += liveAmount; }
+
+        UpdateHealthBar();
     }
 
     public void TakeDamage(int liveAmount, float stunTime = 0, Transform attackerPosition = null)
@@ -45,6 +49,17 @@ public class PlayerLive : MonoBehaviour
         {
             currentLive -= liveAmount;
         }
+
+        UpdateHealthBar();
+    }
+
+    void UpdateHealthBar()
+    {
+        float health_percentatge = currentLive / (float)maxLive;
+
+        healthBar.fillAmount = health_percentatge;
+
+        Debug.Log($"Health bar percentatge {health_percentatge}");
     }
 
     void Die()

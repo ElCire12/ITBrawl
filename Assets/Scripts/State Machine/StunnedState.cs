@@ -25,7 +25,7 @@ public class StunnedState : PlayerState
         context.animator.SetBool("stuned", false);
         context.isStunned = false;
 
-        // Aquí puedes decidir a qué estado volver (por ejemplo Idle)
+        // Aquï¿½ puedes decidir a quï¿½ estado volver (por ejemplo Idle)
         context.ChangeState("Idle");
     }
 
