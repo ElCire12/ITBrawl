@@ -254,7 +254,7 @@ MonoBehaviour:
         m_MethodName: AssignCharacter
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 1391062425670895599, guid: 315a27d7d784c4c47be06b89a9fd1678,
+          m_ObjectArgument: {fileID: 1391062425670895599, guid: e189fb6c4d77a3a40a52c96bd3cd6fa1,
             type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
@@ -761,7 +761,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -1322,7 +1322,7 @@ MonoBehaviour:
   player2FirstButton: {fileID: 395808732}
   PlayerInputPrefab: {fileID: 7164928303199816096, guid: 047be5d06db0fcb40882d1c9354f1268,
     type: 3}
-  maxPlayers: 2
+  maxPlayers: 3
   currrentSelectingState: 0
 --- !u!4 &1709120150
 Transform:

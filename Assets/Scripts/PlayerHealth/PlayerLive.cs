@@ -58,8 +58,6 @@ public class PlayerLive : MonoBehaviour
         float health_percentatge = currentLive / (float)maxLive;
 
         healthBar.fillAmount = health_percentatge;
-
-        Debug.Log($"Health bar percentatge {health_percentatge}");
     }
 
     void Die()

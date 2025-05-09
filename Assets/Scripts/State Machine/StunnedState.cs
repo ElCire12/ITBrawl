@@ -19,6 +19,7 @@ public class StunnedState : PlayerState
     private IEnumerator StunCoroutine()
     {
         context.isStunned = true;
+        context.isAttacking = false;
         context.animator.SetBool("stuned", true);
         context.animator.Play("stuned");
         yield return new WaitForSeconds(stunDuration);
@@ -44,6 +45,11 @@ public class StunnedState : PlayerState
         if (context.isGrounded)
         {
             context.rb.AddForce(context.rb.velocity * -context.deceleration, ForceMode.Force);
+        }
+
+        if (Mathf.Abs(context.rb.velocity.x) > context.airMaxSpeed) // Limit player velocity
+        {
+            context.rb.velocity = new Vector2(context.airMaxSpeed * Mathf.Sign(context.rb.velocity.x), context.rb.velocity.y);
         }
     }
 }

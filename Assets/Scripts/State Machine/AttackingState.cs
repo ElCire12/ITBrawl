@@ -5,7 +5,9 @@ using UnityEngine;
 public class AttackingState : PlayerState
 {
     public AttackingState(PlayerStateManager context) : base(context) { }
-    
+
+    private Coroutine currentCoroutine;
+
     public override void Enter()
     {
         //Ataque arriba
@@ -32,7 +34,7 @@ public class AttackingState : PlayerState
 
     public override void Exit()
     {
-        
+        context.characterAttacks.StopCurrentAttackCoroutine();
     }
 
     public override void Update()

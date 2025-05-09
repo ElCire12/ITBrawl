@@ -139,8 +139,7 @@ public class PlayerStateManager : MonoBehaviour
             ChangeState("Air");
 
             if (specialAttackPressed && movementInput.y > 0.5f && previousState != "AttackingState")
-            {
-                Debug.Log("Enter special attack"); 
+            { 
                 ChangeState("AttackingState");
             }
         }

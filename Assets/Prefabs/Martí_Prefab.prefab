@@ -4983,12 +4983,17 @@ MonoBehaviour:
   specialUpDamage: 100
   specialUpSounds:
   - {fileID: 8300000, guid: a475398d073ea6c46addd843c1dfa481, type: 3}
+  upAttackAirAcceleration: 5
+  upAttackAirMaxSpeed: 2
+  upAttackMoveDuration: 1
   specialUpHurtBox: {fileID: 7964252843561618114}
   bocataForce: 30
   bocataPrefab: {fileID: 3961563253966735483, guid: 089130b574ea35a4c8f9b7853484a62c,
     type: 3}
+  specialFrontRecoveryTime: 0.3
   bocataSpawnPoint: {fileID: 7641325874974506943}
   legoParticles: {fileID: 81561426328292725}
+  specialDownRecoveryTime: 0.5
   specialDownaAffectArea: 2.5
   stunTime: 1
   specialDownDamage: 50
@@ -5010,6 +5015,7 @@ MonoBehaviour:
   maxLive: 300
   currentLive: 0
   playerStateManager: {fileID: 4517308162649213434}
+  healthBar: {fileID: 0}
 --- !u!114 &327610043922249304
 MonoBehaviour:
   m_ObjectHideFlags: 0
