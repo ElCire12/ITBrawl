@@ -4956,7 +4956,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   maxAirJumps: 1
-  jumpForce: 250
+  jumpForce: 300
   airAcceleration: 300
   airMaxSpeed: 15
   extraFallGravity: 30

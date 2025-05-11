@@ -158,7 +158,7 @@ public class PlayerStateManager : MonoBehaviour
             {
                 ChangeState("Walking");
             }
-            else if (rb.velocity.magnitude < 2)
+            else
             {
                 ChangeState("Idle");
             }

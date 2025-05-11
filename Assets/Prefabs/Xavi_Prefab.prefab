@@ -5093,7 +5093,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   maxAirJumps: 1
-  jumpForce: 250
+  jumpForce: 300
   airAcceleration: 300
   airMaxSpeed: 15
   extraFallGravity: 30
@@ -5132,7 +5132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f8e209e9531acf4d98b8a970d8dcd81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicJumpForce: 200
+  musicJumpForce: 150
   specialUpDamage: 100
   specialUpSounds: []
   specialUpHurtBox: {fileID: 7964252843561618114}
@@ -5144,7 +5144,7 @@ MonoBehaviour:
   laserOrigin: {fileID: 5467517749938468196}
   laserLine: {fileID: 907040433476272915}
   laserLength: 20
-  laserDuration: 0.5
+  laserDuration: 0.2
   laserDamage: 30
   laserNoise: 0.2
   rayDistance: 0

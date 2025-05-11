@@ -9,6 +9,8 @@ public class GamePlaySceneManager : MonoBehaviour
 
     public List<GameObject> playersObjects = new List<GameObject>();
 
+    public SupCam camera;
+
     int playerIndex;
 
     void Start()
@@ -35,7 +37,8 @@ public class GamePlaySceneManager : MonoBehaviour
                 pairWithDevice: player.device
             );
 
-            playersObjects.Add(temp.gameObject); // ahora funciona
+            playersObjects.Add(temp.gameObject);
+            camera.players.Add(temp.gameObject);
 
             Debug.Log($"Añadiendo healthbar al jugador {playersObjects[playerIndex]}");
 

@@ -7,7 +7,9 @@ public class IdleState : PlayerState
     public IdleState(PlayerStateManager context) : base(context) { }
     public override void Enter()
     {
-        //Debug.Log("Entró a Idle");
+        ////Debug.Log("Entró a Idle");
+        //context.rb.velocity = Vector3.zero;
+        //Debug.Log("Enter Idle State");
     }
 
     public override void Exit()

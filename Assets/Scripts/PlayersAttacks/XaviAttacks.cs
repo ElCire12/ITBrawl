@@ -35,63 +35,9 @@ public class XaviAttacks : CharacterAttack
 
     public override void FrontalAttack()
     {
-        IEnumerator Coroutine()
+        void SendLaser(float xDistanceMultiplier)
         {
-            context.isAttacking = true;
-            context.rb.velocity = Vector2.zero;
-            context.animator.CrossFadeInFixedTime("FrontSpecialAttack", 0f);
-
-            yield return new WaitForSeconds(0.26f + 0.25f);
-
-            Collider[] hits = Physics.OverlapSphere(frontalAttackPosition.position, frontalAttackArea, enemyLayer);
-            groundParticles.transform.position = frontalAttackPosition.position;
-            groundParticles.Play();
-
-            foreach (Collider hit in hits)
-            {
-                if (hit.gameObject != this.gameObject)
-                {
-                    hit.GetComponent<PlayerLive>()?.TakeDamage(frontalAttackDamage, stunTime, transform);
-                }
-            }
-
-            context.animator.CrossFadeInFixedTime("Idle", specialFrontRecoveryTime);
-            yield return new WaitForSeconds(specialFrontRecoveryTime);
-            context.isAttacking = false;
-        }
-
-        StartAttackCoroutine(Coroutine());
-    }
-
-    public override void UpAttack()
-    {
-        IEnumerator Coroutine()
-        {
-            context.isAttacking = true;
-            specialUpHurtBox.enabled = true;
-            context.rb.velocity = Vector3.zero;
-            context.rb.AddForce(new Vector2(0, musicJumpForce), ForceMode.Impulse);
-
-            yield return new WaitForSeconds(1f);
-            specialUpHurtBox.enabled = false;
-            context.isAttacking = false;
-        }
-
-        StartAttackCoroutine(Coroutine());
-    }
-
-    public override void DownAttack()
-    {
-        IEnumerator Coroutine()
-        {
-            context.isAttacking = true;
-            context.rb.velocity = Vector2.zero;
-
-            context.animator.CrossFadeInFixedTime("SpecialDown", 0f);
-
-            yield return new WaitForSeconds(0.5f);
-
-            Vector3 direction = new Vector3(context.GetActualPlayerDirection(), -1, 0);
+            Vector3 direction = new Vector3(context.GetActualPlayerDirection() * xDistanceMultiplier, -1, 0);
             RaycastHit hit;
             Vector3 endPoint;
 
@@ -115,16 +61,101 @@ public class XaviAttacks : CharacterAttack
                 laserLine.SetPosition(0, laserOrigin.position);
                 laserLine.SetPosition(1, endPoint);
                 laserLine.gameObject.SetActive(true);
+                laserLine.enabled = true;
             }
+        }
 
-            laserLine.enabled = true;
+        void DisableLaser()
+        {
+            laserLine.enabled = false;
+            laserLine.gameObject.SetActive(false);
+        }
 
+        IEnumerator Coroutine()
+        {
+            context.isAttacking = true;
+            context.rb.velocity = Vector2.zero;
+
+            context.animator.CrossFadeInFixedTime("SpecialDown", 0f);
+
+            SendLaser(3);
             yield return new WaitForSeconds(laserDuration);
+            DisableLaser();
+
+            SendLaser(2);
+            yield return new WaitForSeconds(laserDuration);
+            DisableLaser();
+
+            SendLaser(1);
+            yield return new WaitForSeconds(laserDuration);
+            DisableLaser();
 
             context.animator.CrossFadeInFixedTime("Idle", 0f);
 
-            laserLine.enabled = false;
-            laserLine.gameObject.SetActive(false);
+
+            context.isAttacking = false;
+        }
+
+        StartAttackCoroutine(Coroutine());
+    }
+
+    public override void UpAttack()
+    {
+        IEnumerator Coroutine()
+        {
+            context.isAttacking = true;
+            specialUpHurtBox.enabled = true;
+            context.rb.velocity = Vector3.zero;
+            context.animator.CrossFadeInFixedTime("SpecialUp", 0f);
+
+            int xDirection;
+            //if (context.movementInput.x > 0)
+            //{
+            //    xDirection = 1;
+            //}
+            //else if (context.movementInput.x < 0)
+            //{
+            //    xDirection = -1;
+            //}
+            //else
+            //{
+                xDirection = context.GetActualPlayerDirection();
+            //}  
+            context.rb.AddForce(new Vector2(xDirection * musicJumpForce, musicJumpForce), ForceMode.Impulse);
+
+            yield return new WaitForSeconds(1f);
+            specialUpHurtBox.enabled = false;
+            context.isAttacking = false;
+        }
+
+        StartAttackCoroutine(Coroutine());
+    }
+
+    public override void DownAttack()
+    {
+        // FRONTAL ATTACK
+        IEnumerator Coroutine()
+        {
+            context.isAttacking = true;
+            context.rb.velocity = Vector2.zero;
+            context.animator.CrossFadeInFixedTime("FrontSpecialAttack", 0f);
+
+            yield return new WaitForSeconds(0.26f + 0.25f);
+
+            Collider[] hits = Physics.OverlapSphere(frontalAttackPosition.position, frontalAttackArea, enemyLayer);
+            groundParticles.transform.position = frontalAttackPosition.position;
+            groundParticles.Play();
+
+            foreach (Collider hit in hits)
+            {
+                if (hit.gameObject != this.gameObject)
+                {
+                    hit.GetComponent<PlayerLive>()?.TakeDamage(frontalAttackDamage, stunTime, transform);
+                }
+            }
+
+            context.animator.CrossFadeInFixedTime("Idle", specialFrontRecoveryTime);
+            yield return new WaitForSeconds(specialFrontRecoveryTime);
             context.isAttacking = false;
         }
 
