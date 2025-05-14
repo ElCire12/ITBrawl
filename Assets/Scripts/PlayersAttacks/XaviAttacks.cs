@@ -37,32 +37,33 @@ public class XaviAttacks : CharacterAttack
     {
         void SendLaser(float xDistanceMultiplier)
         {
-            Vector3 direction = new Vector3(context.GetActualPlayerDirection() * xDistanceMultiplier, -1, 0);
-            RaycastHit hit;
-            Vector3 endPoint;
+            Vector3 direction = new Vector3(context.GetActualPlayerDirection() * xDistanceMultiplier, -1, 0).normalized;
+            Vector3 rayOrigin = laserOrigin.position;
+            Vector3 hitPoint = rayOrigin + direction * laserLength;
 
-            //Hit laser
-            if (Physics.Raycast(laserOrigin.position, direction, out hit, laserLength))
+            // Raycast para daño
+            if (Physics.Raycast(rayOrigin, direction, out RaycastHit hit, laserLength))
             {
-                endPoint = hit.point;
+                hitPoint = hit.point;
 
-                PlayerLive playerLiveComponent = hit.collider.gameObject.GetComponent<PlayerLive>();
-                if (playerLiveComponent != null)
+                if (hit.collider.TryGetComponent(out PlayerLive playerLive))
                 {
-                    playerLiveComponent.TakeDamage(frontalAttackDamage, stunTime, transform);
+                    playerLive.TakeDamage(frontalAttackDamage, stunTime, transform);
                 }
             }
 
-            //Visual laser
+            // Raycast visual solo contra Ground
             int groundLayerMask = LayerMask.GetMask("Ground");
-            if (Physics.Raycast(laserOrigin.position, direction, out hit, laserLength, groundLayerMask))
+            if (Physics.Raycast(rayOrigin, direction, out RaycastHit visualHit, laserLength, groundLayerMask))
             {
-                endPoint = hit.point;
-                laserLine.SetPosition(0, laserOrigin.position);
-                laserLine.SetPosition(1, endPoint);
-                laserLine.gameObject.SetActive(true);
-                laserLine.enabled = true;
+                hitPoint = visualHit.point;
             }
+
+            // Dibujar rayo visual
+            laserLine.SetPosition(0, rayOrigin);
+            laserLine.SetPosition(1, hitPoint);
+            laserLine.gameObject.SetActive(true);
+            laserLine.enabled = true;
         }
 
         void DisableLaser()
