@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GamePlaySceneManager : MonoBehaviour
@@ -15,12 +16,14 @@ public class GamePlaySceneManager : MonoBehaviour
 
     void Start()
     {
-        if (healthBars == null) Debug.Log("healthBars es null");
         DynamicGI.UpdateEnvironment();
-        //foreach (var healthbar in healthBars)
-        //{
-        //    healthbar.gameObject.transform.parent.gameObject.SetActive(false);
-        //}
+
+        if (GameManager.Instance == null)
+        {
+            Debug.Log("Loading start scene");
+            SceneManager.LoadScene("StartScene");
+            return;
+        }
 
         foreach (var device in InputSystem.devices)
         {

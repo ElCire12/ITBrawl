@@ -215,6 +215,7 @@ MonoBehaviour:
   parent: {fileID: 0}
   liveTime: 5
   damage: 15
+  destroyOnTouchSomething: 1
   afectMask:
     serializedVersion: 2
     m_Bits: 0

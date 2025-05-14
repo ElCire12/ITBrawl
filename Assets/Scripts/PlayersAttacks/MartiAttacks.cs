@@ -6,6 +6,8 @@ public class MartiAttacks : CharacterAttack
 {
     [Header("Special Up / Gorra")]
     public float gorraJumpForce;
+    public GameObject gorraPrefab;
+    public GameObject gorraFake;
     [SerializeField] private int specialUpDamage;
     public AudioClip[] specialUpSounds;
 
@@ -21,10 +23,9 @@ public class MartiAttacks : CharacterAttack
     public float bocataForce; 
     public GameObject bocataPrefab;
     public float specialFrontRecoveryTime;
-
+    public Transform bocataSpawnPoint;
 
     [Header("Special Down / Ataque Lego")]
-    public Transform bocataSpawnPoint; 
     public ParticleSystem legoParticles;
     public float specialDownRecoveryTime;
 
@@ -46,7 +47,7 @@ public class MartiAttacks : CharacterAttack
 
             yield return new WaitForSeconds(0.18f + 0.25f);
             GameObject bocata = Instantiate(bocataPrefab, bocataSpawnPoint.position, Quaternion.identity);
-            bocata.GetComponent<BullletScript>().parent = this.gameObject;
+            bocata.GetComponent<BulletScript>().parent = this.gameObject;
             Rigidbody rbBocata = bocata.GetComponent<Rigidbody>();
             rbBocata.AddForce(new Vector3(context.GetActualPlayerDirection(), 0, 0) * bocataForce, ForceMode.Impulse);
 
@@ -65,8 +66,11 @@ public class MartiAttacks : CharacterAttack
             context.rb.velocity = Vector2.zero;
             context.animator.CrossFadeInFixedTime("SpecialUp", 0f);
             context.rb.constraints |= RigidbodyConstraints.FreezePositionY;
+            gorraFake.SetActive(true);
 
             yield return new WaitForSeconds(0.58f + 0.25f);
+            gorraFake.SetActive(false);
+            Instantiate(gorraPrefab, bocataSpawnPoint.position, gorraPrefab.transform.rotation);
 
             context.rb.constraints &= ~RigidbodyConstraints.FreezePositionY;
 

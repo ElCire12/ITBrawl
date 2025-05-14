@@ -2,34 +2,48 @@
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
+using System.Linq;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using TMPro;
 
-
-
-public class CharacterSelectManager : MonoBehaviour
+public class CharacterSelectionManager : MonoBehaviour
 {
-    public static CharacterSelectManager Instance { get; private set; }
-
-    public GameObject player1FirstButton;
-    public GameObject player2FirstButton;
-
-    public GameObject PlayerInputPrefab; 
+    public static CharacterSelectionManager Instance { get; private set; }
 
     public InputDevice selectingDevice;
 
-    PlayerInfo playerSelecting = null; 
+    PlayerInfo playerSelecting = null;
+
+    [Header("Start UI")]
+    public GameObject startUi;
+    
+    [Header("Num Players Selection UI")]
+    public GameObject numPlayersSelectionUi;
+
+    [Header("Join Devices UI")]
+    public GameObject JoinDevicesUI;
+    public TextMeshProUGUI devicesJoinedTxt;
+    public TextMeshProUGUI playersRemainingTxt;
+
+    [Header("CharacterSelection UI")]
+    public GameObject characterSelectionUi;
+    public TextMeshProUGUI playerSelectingInfoTxt;
+    public Button firstSelectedButton;
 
     private InputAction joinAction;
-    public int maxPlayers = 3;
+    public int maxPlayers = 0;
 
     public enum selectingStates
     {
+        startScreen,
+        numPlayersSelecion,
         detectingDevices,
         selectingCharacters
     }
 
-    public selectingStates currrentSelectingState = selectingStates.detectingDevices; 
+    public selectingStates currrentSelectingState = selectingStates.startScreen; 
 
     private void Awake()
     {
@@ -42,6 +56,8 @@ public class CharacterSelectManager : MonoBehaviour
         }
 
         Instance = this;
+
+        DynamicGI.UpdateEnvironment();
     }
 
     private void OnEnable()
@@ -54,6 +70,7 @@ public class CharacterSelectManager : MonoBehaviour
 
     void Start()
     {
+        //Enable all devices on start
         foreach (var device in InputSystem.devices)
         {
             InputSystem.EnableDevice(device);
@@ -62,6 +79,17 @@ public class CharacterSelectManager : MonoBehaviour
 
     private void Update()
     {
+        if (currrentSelectingState == selectingStates.startScreen) {
+            if (joinAction.triggered)
+            {
+                currrentSelectingState = selectingStates.numPlayersSelecion;
+                startUi.SetActive(false);
+                numPlayersSelectionUi.SetActive(true);
+            }
+        }
+        
+        // selecting state numplayersselection is manged by buttons
+
         if (currrentSelectingState == selectingStates.detectingDevices)
         {
             if (joinAction.triggered)
@@ -70,15 +98,18 @@ public class CharacterSelectManager : MonoBehaviour
 
                 if (device != null && GameManager.Instance.players.Count < maxPlayers && !GameManager.Instance.players.Exists(p => p.device == device))
                 {
-                    var newPlayer = new PlayerInfo { device = device };
+                    var newPlayer = new PlayerInfo { device = device, playerIndex = GameManager.Instance.players.Count +1};
                     GameManager.Instance.players.Add(newPlayer);
 
-                    Debug.Log($"Jugador {GameManager.Instance.players.Count} unido con {device.displayName}");
+                    //PlayerInput.Instantiate(PlayerInputPrefab);
 
-                    PlayerInput.Instantiate(PlayerInputPrefab);
-                    
+                    devicesJoinedTxt.text += $"\nPlayer{GameManager.Instance.players.Count} joined with {device.displayName}";
+                    playersRemainingTxt.text = $"{maxPlayers - GameManager.Instance.players.Count} remaining";
+
                     if (GameManager.Instance.players.Count >= maxPlayers)
                     {
+                        JoinDevicesUI.SetActive(false);
+                        characterSelectionUi.SetActive(true);
                         currrentSelectingState = selectingStates.selectingCharacters;
                         StartCoroutine(PlayersSelection());
                     }
@@ -92,9 +123,12 @@ public class CharacterSelectManager : MonoBehaviour
         foreach (var player in GameManager.Instance.players)
         {
             playerSelecting = player;
+
+            playerSelectingInfoTxt.text = $"Player{playerSelecting.playerIndex} selecting character...";
+
             DisableAllDevicesExcept(player.device);
             Debug.Log($"Esperando que el jugador con {player.device.displayName} seleccione su personaje...");
-            yield return StartCoroutine(WaitSelection(player)); // 👈 Espera antes de pasar al siguiente
+            yield return StartCoroutine(WaitSelection(player));
         }
 
         Debug.Log("Todos los jugadores han seleccionado.");
@@ -129,12 +163,22 @@ public class CharacterSelectManager : MonoBehaviour
             Debug.Log($"{playerSelecting.device.displayName} selected: {character.name}");
         }
     }
+
+    public void changeNumPlayers(int numPlayers)
+    {
+        maxPlayers = numPlayers;
+        numPlayersSelectionUi.SetActive(false);
+        JoinDevicesUI.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(firstSelectedButton.gameObject);
+        currrentSelectingState = selectingStates.detectingDevices;
+    }
 }
 
 public class PlayerInfo
 {
     public InputDevice device;
     public GameObject character = null;
+    public int playerIndex; 
     public bool hasSelectedCharacter = false;
 }
 

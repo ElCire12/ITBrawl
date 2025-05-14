@@ -3,10 +3,10 @@ using UnityEngine.InputSystem;
 
 public class CharacterSelectorUI : MonoBehaviour
 {
-    private CharacterSelectManager manager = CharacterSelectManager.Instance;
+    private CharacterSelectionManager manager = CharacterSelectionManager.Instance;
     private int playerIndex;
 
-    public void Init(CharacterSelectManager managerRef, int index)
+    public void Init(CharacterSelectionManager managerRef, int index)
     {
         manager = managerRef;
         playerIndex = index;
