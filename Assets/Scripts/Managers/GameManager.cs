@@ -6,20 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public enum GameStates
-    {
-        StartScreen,
-        PlayerSelection,
-        Gameplay,
-        Pause,
-        WinnerScreen
-    }
-
     public static GameManager Instance { get; private set; }
 
-    private GameStates currentGameState = GameStates.StartScreen;
-
     public List<PlayerInfo> players = new List<PlayerInfo>();
+
+    public List<PlayerInfo> playersPodiumPositions = new List<PlayerInfo>();
 
     private void Awake()
     {

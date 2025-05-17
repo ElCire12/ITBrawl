@@ -24,7 +24,7 @@ public class SupCam : MonoBehaviour
 
     private void Start()
     {
-        players.Add(levelBounds.gameObject);
+        //players.Add(levelBounds.gameObject);
     }
 
     void Update()

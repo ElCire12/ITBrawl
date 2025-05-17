@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Dani Override Animator
+  m_Controller: {fileID: 9100000, guid: 95d16574263ec0d4985ef3155b52d43a, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -1237650253582119680, guid: 0b03a8dd8e69ab945b98cda527dd5c5f,
+      type: 3}
+    m_OverrideClip: {fileID: -5517153816401758241, guid: ed7c50200cf2a1942b647099d9acdc8b,
+      type: 3}
+  - m_OriginalClip: {fileID: 7609604593685395993, guid: 0b03a8dd8e69ab945b98cda527dd5c5f,
+      type: 3}
+    m_OverrideClip: {fileID: 5670647785862091345, guid: ed7c50200cf2a1942b647099d9acdc8b,
+      type: 3}
+  - m_OriginalClip: {fileID: -1732268767278250924, guid: 0b03a8dd8e69ab945b98cda527dd5c5f,
+      type: 3}
+    m_OverrideClip: {fileID: -6102106018494705823, guid: ed7c50200cf2a1942b647099d9acdc8b,
+      type: 3}

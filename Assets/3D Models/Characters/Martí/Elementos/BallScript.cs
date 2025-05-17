@@ -74,7 +74,7 @@ public class BallScript : MonoBehaviour
 
             if (playerLiveScript != null)
             {
-                playerLiveScript.TakeDamage(damage, 0.3f, thrower.transform);
+                playerLiveScript.TakeDamage(damage, 0.3f, transform);
                 EnterHittedState();
             }
         }
