@@ -1,7 +1,11 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.UI.Image;
+using UnityEngine.Timeline;
+using System.Collections;
 
 public class PlayerStateManager : MonoBehaviour
 {
@@ -11,7 +15,12 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerInput playerInput;
     private InputAction movementAction;
     private InputAction specialAttackAction;
+    private InputAction basicAttackAction;
     private InputAction jumpAction;
+
+    public PlayerInfo playerInfo;
+
+    public TextMeshProUGUI playerNumberText;
 
     [Header("PlayerState")]
     public string playerstate = "";
@@ -20,6 +29,7 @@ public class PlayerStateManager : MonoBehaviour
     [Header("Input")]
     public Vector2 movementInput;
     public bool specialAttackPressed;
+    public bool basicAttackPressed; 
     public bool jumpStarted; 
 
     [Header("Movement")]
@@ -51,10 +61,15 @@ public class PlayerStateManager : MonoBehaviour
     public Transform visuals;
 
     [Header("Sounds")]
-    public AudioClip jumpSound; 
+    public AudioClip jumpSound;
+
+    public bool canAttack = true; 
+    public bool canJump = true;
+
 
     private Vector2 initialPosition;
     public bool isStunned = false;
+    PlayerLive playerLiveScript;
 
     void Awake()
     {
@@ -63,7 +78,10 @@ public class PlayerStateManager : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         movementAction = playerInput.actions["Move"];
         specialAttackAction = playerInput.actions["SpecialAttack"];
+        basicAttackAction = playerInput.actions["BasicAttack"];
         jumpAction = playerInput.actions["Jump"];
+        playerLiveScript = gameObject.GetComponent<PlayerLive>();
+
     }
 
     void OnEnable()
@@ -90,7 +108,8 @@ public class PlayerStateManager : MonoBehaviour
             { "Walking", new WalkingState(this) },
             { "Jump", new JumpState(this)},
             { "Air", new AirState(this)},
-            { "AttackingState", new AttackingState(this)}
+            { "SpecialAttackingState", new SpecialAttackingState(this)},
+            {"BasicAttackingState", new  BasicAttackingState(this)}
         };
 
         currentState = new IdleState(this);
@@ -100,17 +119,17 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (currentState == null) return;
 
-        #region
-        //ONLY IN DEVELOPMENT
         playerstate = currentState.ToString();
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (transform.position.y < -30f)
         {
-            transform.position = initialPosition;
+            playerLiveScript.TakeDamage(15, 0); 
             rb.velocity = Vector2.zero;
+            rb.angularVelocity = Vector2.zero;
+            rb.position = initialPosition;
         }
+
         animator.SetBool("is_grounded", isGrounded);
-        #endregion
 
         //MAIN PROGRAM
         ReadPlayerInput();
@@ -138,19 +157,23 @@ public class PlayerStateManager : MonoBehaviour
         {
             ChangeState("Air");
 
-            if (specialAttackPressed && movementInput.y > 0.5f && previousState != "AttackingState")
+            if (specialAttackPressed && movementInput.y > 0.5f && previousState != "SpecialAttackingState" && canAttack)
             { 
-                ChangeState("AttackingState");
+                ChangeState("SpecialAttackingState");
             }
         }
 
         else if (isGrounded)
         {
-            if (specialAttackPressed)
+            if (specialAttackPressed && canAttack)
             {
-                ChangeState("AttackingState");
+                ChangeState("SpecialAttackingState");
             }
-            else if (jumpStarted)
+            else if (basicAttackPressed && canAttack)
+            {
+                ChangeState("BasicAttackingState");
+            }
+            else if (jumpStarted && canJump)
             {
                 ChangeState("Jump");
             }
@@ -180,17 +203,21 @@ public class PlayerStateManager : MonoBehaviour
     {
         movementInput = movementAction.ReadValue<Vector2>();
         specialAttackPressed = specialAttackAction.IsPressed();
+        basicAttackPressed = basicAttackAction.IsPressed();
     }
 
     void ReadPlayerContext()
     {
         // DETECT IF IS GROUNDED
-        // Castea un rayo hacia abajo
-        Ray ray = new Ray(transform.position, Vector3.down);
-        isGrounded = Physics.Raycast(ray, groundCheckDistance, groundMask);
+        float raysSpacing = 0.5f;
+        bool centerRay  = Physics.Raycast(new Ray(transform.position, Vector3.down), groundCheckDistance, groundMask);
+        bool frontRay = Physics.Raycast(new Ray(new Vector3 (transform.position.x + raysSpacing, transform.position.y, transform.position.z), Vector3.down), groundCheckDistance, groundMask);
+        bool backRay = Physics.Raycast(new Ray(new Vector3(transform.position.x - raysSpacing, transform.position.y, transform.position.z), Vector3.down), groundCheckDistance, groundMask);
+        isGrounded = centerRay || frontRay || backRay;
 
-        // (Opcional) Para verlo en la escena
-        Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
+        Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, centerRay ? Color.green : Color.red);
+        Debug.DrawRay(new Vector3(transform.position.x + raysSpacing, transform.position.y, transform.position.z), Vector3.down * groundCheckDistance, frontRay ? Color.green : Color.red);
+        Debug.DrawRay(new Vector3(transform.position.x - raysSpacing, transform.position.y, transform.position.z), Vector3.down * groundCheckDistance, backRay ? Color.green : Color.red);
     }
 
     void DeleteInputs()

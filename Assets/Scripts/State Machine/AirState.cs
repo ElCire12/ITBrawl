@@ -34,7 +34,7 @@ public class AirState : PlayerState
         context.animator.SetFloat("YVelocity", context.rb.velocity.y);
         
         //Detect double jump
-        if (jumpNextFrame && jumpsCount < context.maxAirJumps && context.previousState != "AttackingState")
+        if (jumpNextFrame && jumpsCount < context.maxAirJumps && context.previousState != "SpecialAttackingState")
         {
             context.rb.velocity = Vector3.zero;
             context.rb.AddForce(new Vector2(0, 1 * context.jumpForce), ForceMode.Impulse);
