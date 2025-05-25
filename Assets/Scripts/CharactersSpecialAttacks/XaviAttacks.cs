@@ -8,7 +8,6 @@ public class XaviAttacks : CharacterAttack
     [SerializeField] private int specialUpDamage;
     public float specialUpStunTime;
     public float musicJumpForce;
-    public AudioClip[] specialUpSounds;
     public Collider specialUpHurtBox;
     public ParticleSystem musicParticles;
     public Transform musicParticlesPosition; 
@@ -47,6 +46,11 @@ public class XaviAttacks : CharacterAttack
     public float basicUpRecoveryTime;
     public Transform basicUpAttackPosition;
 
+    [Header("Sounds")]
+    public AudioClip[] specialUpSounds;
+    public AudioClip[] specialDownSounds;
+    public AudioClip[] specialFrontSounds;
+
     [Header("General")]
     public LayerMask enemyLayer;
 
@@ -65,7 +69,7 @@ public class XaviAttacks : CharacterAttack
 
                 if (hit.collider.TryGetComponent(out PlayerLive playerLive))
                 {
-                    playerLive.TakeDamage(laserDamage, laserStunTime);
+                    playerLive.TakeDamage(laserDamage, laserStunTime, transform);
                 }
             }
 
@@ -93,6 +97,8 @@ public class XaviAttacks : CharacterAttack
         {
             context.isAttacking = true;
             context.rb.velocity = Vector2.zero;
+
+            SoundManager.Instance.PlayRandomSound(specialFrontSounds);
 
             context.animator.CrossFadeInFixedTime("SpecialDown", 0f);
 
@@ -127,6 +133,8 @@ public class XaviAttacks : CharacterAttack
             context.rb.velocity = Vector3.zero;
             context.animator.CrossFadeInFixedTime("SpecialUp", 0f);
 
+            SoundManager.Instance.PlayRandomSound(specialUpSounds);
+
             int xDirection = context.GetActualPlayerDirection();
             context.rb.AddForce(new Vector2(xDirection * musicJumpForce, musicJumpForce), ForceMode.Impulse);
 
@@ -148,6 +156,7 @@ public class XaviAttacks : CharacterAttack
             context.isAttacking = true;
             context.rb.velocity = Vector2.zero;
             context.animator.CrossFadeInFixedTime("FrontSpecialAttack", 0f);
+            SoundManager.Instance.PlayRandomSound(specialDownSounds);
 
             yield return new WaitForSeconds(0.26f + 0.25f);
 
@@ -229,7 +238,7 @@ public class XaviAttacks : CharacterAttack
         laserLine.gameObject.SetActive(false);
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         // Special Down (Puñetazo)
         Gizmos.color = Color.red;

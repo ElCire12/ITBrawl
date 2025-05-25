@@ -22,6 +22,13 @@ public class BasicAttackingState : PlayerState
         {
             context.characterAttacks.BasicFrontalAttack();
         }
+
+        //Ataque arriba aunque este el joystick abajo
+        else if (context.movementInput.y < -0.5f)
+        {
+            context.characterAttacks.BasicUpAttack();
+
+        }
     }
 
     public override void Exit()

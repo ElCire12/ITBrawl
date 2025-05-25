@@ -6,11 +6,11 @@ using UnityEngine;
 public class DaniAttacks : CharacterAttack
 {
     [Header("Special Up / Escridassada")]
-    public float gorraJumpForce;
+    public float specialUpJumpForce;
     [SerializeField] private int specialUpDamage;
     public override int SpecialUpDamage => specialUpDamage;
     public Collider specialUpHurtBox;
-    public AudioClip[] specialUpSounds;
+    
     public float specialUpStunTime = 1f;
     public float specialUpDuration = 1f;
 
@@ -29,6 +29,7 @@ public class DaniAttacks : CharacterAttack
 
     [Header("Special Down / Agarre")]
     public float grabDuration = 2f;
+    public float didntGrabAPlayerRecoveryTime;
     public float grabRadius = 1.5f;
     public Transform grabFollowPoint;
     public int grabDamage = 30;
@@ -49,6 +50,11 @@ public class DaniAttacks : CharacterAttack
     public float basicUpRecoveryTime;
     public Transform basicUpAttackPosition;
 
+    [Header("Sounds")]
+    public AudioClip[] specialUpSounds;
+    public AudioClip[] specialDownSounds;
+    public AudioClip[] specialFrontSounds;
+
     public float stunTime = 1f;
     public LayerMask enemyLayer;
 
@@ -61,6 +67,7 @@ public class DaniAttacks : CharacterAttack
             context.animator.CrossFadeInFixedTime("FrontSpecialAttack", 0f);
             context.animator.speed = 0.4f;
 
+            SoundManager.Instance.PlayRandomSound(specialFrontSounds);
             yield return new WaitForSeconds(0.18f + 0.25f);
             GameObject bocata = Instantiate(ballPrefab, ballSpawnPoint.position, Quaternion.identity);
             bocata.GetComponent<BallScript>().thrower = this.gameObject;
@@ -80,17 +87,34 @@ public class DaniAttacks : CharacterAttack
         IEnumerator Coroutine()
         {
             context.isAttacking = true;
-            context.rb.velocity = Vector2.zero;
-            context.animator.CrossFadeInFixedTime("SpecialUp", 0f);
-            context.animator.speed = 0.5f;
-
             specialUpHurtBox.enabled = true;
-            context.rb.AddForce(new Vector2(0, gorraJumpForce), ForceMode.Impulse);
+            context.animator.CrossFadeInFixedTime("SpecialUp", 0f);
             SoundManager.Instance.PlayRandomSound(specialUpSounds);
+            context.rb.velocity = Vector3.zero;
+            context.rb.AddForce(new Vector2(0, specialUpJumpForce), ForceMode.Impulse);
 
-            yield return new WaitForSeconds(specialUpDuration);
-            
-            context.animator.speed = 1f;
+            float timer = 0f;
+            while (timer < upAttackMoveDuration)
+            {
+                timer += Time.deltaTime;
+
+                if (context.movementInput.x != 0)
+                {
+                    Vector3 force = new Vector3(context.movementInput.x * context.airAcceleration, 0f, 0f);
+                    context.rb.AddForce(force, ForceMode.Force);
+                }
+
+                if (Mathf.Abs(context.rb.velocity.x) > upAttackAirMaxSpeed)
+                {
+                    context.rb.velocity = new Vector2(
+                        upAttackAirMaxSpeed * Mathf.Sign(context.rb.velocity.x),
+                        context.rb.velocity.y
+                    );
+                }
+
+                yield return null;
+            }
+
             specialUpHurtBox.enabled = false;
             context.isAttacking = false;
         }
@@ -111,38 +135,42 @@ public class DaniAttacks : CharacterAttack
 
             yield return new WaitForSeconds(0.2f);
 
-            Collider[] hits = Physics.OverlapSphere(grabPosition.position, grabRadius);
+            Collider[] hits = Physics.OverlapSphere(grabPosition.position, grabRadius, enemyLayer);
+            
+            SoundManager.Instance.PlayRandomSound(specialDownSounds);
 
-            foreach (Collider hit in hits)
-            {
-                if (hit.gameObject == this.gameObject) continue;
+            if (hits.Length > 1) {
 
-                PlayerLive enemy = hit.GetComponent<PlayerLive>();
-                if (enemy != null)
+                context.animator.CrossFadeInFixedTime("Idle", grabDuration);
+
+                foreach (Collider hit in hits)
                 {
-                    Debug.Log($"Hitted {enemy.name}");
-                    enemy.TakeDamage(grabDamage, grabStunTime);
-                    StartCoroutine(GrabFollowCoroutine(enemy));
-                    break;
-                }
-                else
-                {
-                    context.canAttack = true;
-                    context.canJump = true;
+                    if (hit.gameObject == this.gameObject) continue;
+
+                    PlayerLive enemy = hit.GetComponent<PlayerLive>();
+                    if (enemy != null)
+                    {
+                        Debug.Log($"Hitted {enemy.name}");
+                        enemy.TakeDamage(grabDamage, grabStunTime);
+                        StartCoroutine(GrabFollowCoroutine(enemy));
+                        break;
+                    }
                 }
             }
 
-            context.animator.speed = 1f;
+            else
+            {
+                print("Didn't hit a player");
+                context.canJump = true; 
+                context.canAttack = true;
 
-            // Visualmente pasar a Idle, pero internamente seguir en "attack mode"
-            context.animator.CrossFadeInFixedTime("Idle", grabDuration);
-
-            context.isAttacking = false;
-
-            yield return new WaitForSeconds(grabDuration);
-
-            // Ahora sí, liberar completamente
+                context.animator.CrossFadeInFixedTime("Idle", didntGrabAPlayerRecoveryTime);
+                yield return new WaitForSeconds(didntGrabAPlayerRecoveryTime);
+            }
             
+
+            context.animator.speed = 1f;
+            context.isAttacking = false;
         }
 
         StartAttackCoroutine(Coroutine());
@@ -227,7 +255,7 @@ public class DaniAttacks : CharacterAttack
 
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         // Special Down 
         Gizmos.color = Color.red;

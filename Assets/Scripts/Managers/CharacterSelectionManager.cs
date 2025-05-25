@@ -7,12 +7,8 @@ using System.Linq;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.Video;
 
-/// <summary>
-/// Controlador principal de la selecció de personatges.
-/// Gestiona les fases de: pantalla inicial, selecció de nombre de jugadors,
-/// connexió de dispositius i selecció de personatge.
-/// </summary>
 public class CharacterSelectionManager : MonoBehaviour
 {
     public static CharacterSelectionManager Instance { get; private set; }
@@ -22,9 +18,12 @@ public class CharacterSelectionManager : MonoBehaviour
 
     [Header("Start UI")]
     public GameObject startUi;
+    public VideoPlayer videoPlayer;
+    public RawImage videoImage; 
 
     [Header("Num Players Selection UI")]
     public GameObject numPlayersSelectionUi;
+    public Button firstSelectedButtonInNumPlayersSelection;
 
     [Header("Join Devices UI")]
     public GameObject JoinDevicesUI;
@@ -34,10 +33,17 @@ public class CharacterSelectionManager : MonoBehaviour
     [Header("CharacterSelection UI")]
     public GameObject characterSelectionUi;
     public TextMeshProUGUI playerSelectingInfoTxt;
-    public Button firstSelectedButton;
+    public Button firstSelectedButtonInCharacterSelection;
+
+    [Header("Splash Auto Transition")]
+    public float splashDuration = 5f; // Tiempo de espera para transición automática
 
     private InputAction joinAction;
+    private InputAction skipStartAction;
+    private InputAction backAction;
     public int maxPlayers = 0;
+
+    private bool splashTimerStarted = false;
 
     public enum selectingStates
     {
@@ -51,7 +57,6 @@ public class CharacterSelectionManager : MonoBehaviour
 
     private void Awake()
     {
-        // Configura singleton
         if (Instance != null && Instance != this)
         {
             Debug.LogWarning("Hi ha més d'un CharacterSelectManager a l'escena. Destruint duplicat.");
@@ -60,23 +65,28 @@ public class CharacterSelectionManager : MonoBehaviour
         }
 
         Instance = this;
-
-        // Actualitza l'entorn d'il·luminació
         DynamicGI.UpdateEnvironment();
     }
 
     private void OnEnable()
     {
-        // Crea acció per unir-se amb Start (gamepad) o Enter (teclat)
         joinAction = new InputAction(type: InputActionType.Button);
         joinAction.AddBinding("<Gamepad>/start");
         joinAction.AddBinding("<Keyboard>/enter");
         joinAction.Enable();
+
+        skipStartAction = new InputAction(type: InputActionType.Button);
+        skipStartAction.AddBinding("<Gamepad>/buttonSouth");
+        skipStartAction.Enable();
+
+        backAction = new InputAction(type: InputActionType.Button);
+        backAction.AddBinding("<Gamepad>/buttonEast");
+        backAction.AddBinding("<Keyboard>/escape");
+        backAction.Enable();
     }
 
     void Start()
     {
-        // Activa tots els dispositius d'entrada al començar
         foreach (var device in InputSystem.devices)
         {
             InputSystem.EnableDevice(device);
@@ -85,39 +95,66 @@ public class CharacterSelectionManager : MonoBehaviour
 
     private void Update()
     {
-        // Pantalla inicial, espera que el jugador premi Start/Enter
         if (currrentSelectingState == selectingStates.startScreen)
         {
-            if (joinAction.triggered)
+            if (!splashTimerStarted)
             {
+                splashTimerStarted = true;
+                StartCoroutine(SplashScreenCountdown());
+            }
+
+            if (joinAction.triggered || skipStartAction.triggered)
+            {
+                StopAllCoroutines();
                 currrentSelectingState = selectingStates.numPlayersSelecion;
+                videoPlayer.enabled = false;
                 startUi.SetActive(false);
                 numPlayersSelectionUi.SetActive(true);
             }
         }
 
-        // La selecció de nombre de jugadors es gestiona amb botons
+        if (currrentSelectingState == selectingStates.numPlayersSelecion)
+        {
+            if (backAction.triggered)
+            {
+                currrentSelectingState = selectingStates.startScreen;
+                splashTimerStarted = false;
+                startUi.SetActive(true);
+                videoPlayer.enabled = true;
+                numPlayersSelectionUi.SetActive(false);
+            }
+        }
 
-        // Estat de connexió de dispositius
         if (currrentSelectingState == selectingStates.detectingDevices)
         {
+            playersRemainingTxt.text = $"{maxPlayers - GameInfo.Instance.players.Count} restant(s)";
+            if (backAction.triggered)
+            {
+                currrentSelectingState = selectingStates.numPlayersSelecion;
+                JoinDevicesUI.SetActive(false);
+                numPlayersSelectionUi.SetActive(true);
+
+                EventSystem.current.SetSelectedGameObject(firstSelectedButtonInNumPlayersSelection.gameObject);
+
+                GameInfo.Instance.players.Clear();
+                devicesJoinedTxt.text = "";
+                playersRemainingTxt.text = $"{maxPlayers} restant(s)";
+            }
+
             if (joinAction.triggered)
             {
                 var device = joinAction.activeControl?.device;
 
-                // Si el dispositiu no s'ha unit encara i no s'ha arribat al màxim
-                if (device != null && GameManager.Instance.players.Count < maxPlayers &&
-                    !GameManager.Instance.players.Exists(p => p.device == device))
+                if (device != null && GameInfo.Instance.players.Count < maxPlayers &&
+                    !GameInfo.Instance.players.Exists(p => p.device == device))
                 {
-                    var newPlayer = new PlayerInfo { device = device, playerIndex = GameManager.Instance.players.Count + 1 };
-                    GameManager.Instance.players.Add(newPlayer);
+                    var newPlayer = new PlayerInfo { device = device, playerIndex = GameInfo.Instance.players.Count + 1 };
+                    GameInfo.Instance.players.Add(newPlayer);
 
-                    // Actualitza UI
-                    devicesJoinedTxt.text += $"\nPlayer{GameManager.Instance.players.Count} joined with {device.displayName}";
-                    playersRemainingTxt.text = $"{maxPlayers - GameManager.Instance.players.Count} restant(s)";
+                    devicesJoinedTxt.text += $"\nEl jugador{GameInfo.Instance.players.Count} s'ha unit amb el dispositiu: {device.displayName}";
+                    playersRemainingTxt.text = $"{maxPlayers - GameInfo.Instance.players.Count} restant(s)";
 
-                    // Tots els jugadors s'han unit, comença selecció de personatges
-                    if (GameManager.Instance.players.Count >= maxPlayers)
+                    if (GameInfo.Instance.players.Count >= maxPlayers)
                     {
                         JoinDevicesUI.SetActive(false);
                         characterSelectionUi.SetActive(true);
@@ -129,15 +166,45 @@ public class CharacterSelectionManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Coroutine que recorre cada jugador perquè seleccioni un personatge.
-    /// </summary>
+    IEnumerator SplashScreenCountdown()
+    {
+        yield return new WaitForSeconds(splashDuration);
+
+        // Fade out del video
+        yield return StartCoroutine(FadeOutVideo(1.5f)); // 1 segundo de duración del fade
+
+        // Transición al siguiente estado
+        currrentSelectingState = selectingStates.numPlayersSelecion;
+        videoPlayer.enabled = false;
+        startUi.SetActive(false);
+        numPlayersSelectionUi.SetActive(true);
+    }
+
+    IEnumerator FadeOutVideo(float duration)
+    {
+        if (videoImage == null)
+            yield break;
+
+        Color startColor = videoImage.color;
+        Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
+
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            videoImage.color = Color.Lerp(startColor, endColor, elapsed / duration);
+            yield return null;
+        }
+
+        videoImage.color = endColor;
+    }
+
     IEnumerator PlayersSelection()
     {
-        foreach (var player in GameManager.Instance.players)
+        foreach (var player in GameInfo.Instance.players)
         {
             playerSelecting = player;
-
             playerSelectingInfoTxt.text = $"Jugador {playerSelecting.playerIndex} seleccionant personatge...";
 
             DisableAllDevicesExcept(player.device);
@@ -149,17 +216,11 @@ public class CharacterSelectionManager : MonoBehaviour
         SceneManager.LoadScene("GameplayScene");
     }
 
-    /// <summary>
-    /// Espera que el jugador hagi seleccionat un personatge.
-    /// </summary>
     IEnumerator WaitSelection(PlayerInfo player)
     {
         yield return new WaitUntil(() => player.character != null);
     }
 
-    /// <summary>
-    /// Desactiva tots els dispositius menys el que toca.
-    /// </summary>
     void DisableAllDevicesExcept(InputDevice deviceException)
     {
         foreach (var device in InputSystem.devices)
@@ -171,9 +232,6 @@ public class CharacterSelectionManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Assigna un personatge al jugador actual.
-    /// </summary>
     public void AssignCharacter(GameObject character)
     {
         if (playerSelecting != null)
@@ -181,24 +239,20 @@ public class CharacterSelectionManager : MonoBehaviour
             playerSelecting.character = character;
             Debug.Log($"{playerSelecting.device.displayName} ha seleccionat: {character.name}");
         }
+
+        EventSystem.current.SetSelectedGameObject(firstSelectedButtonInCharacterSelection.gameObject);
     }
 
-    /// <summary>
-    /// Canvia el nombre de jugadors i comença la detecció de dispositius.
-    /// </summary>
     public void changeNumPlayers(int numPlayers)
     {
         maxPlayers = numPlayers;
         numPlayersSelectionUi.SetActive(false);
         JoinDevicesUI.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(firstSelectedButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(firstSelectedButtonInCharacterSelection.gameObject);
         currrentSelectingState = selectingStates.detectingDevices;
     }
 }
 
-/// <summary>
-/// Classe que guarda la informació de cada jugador.
-/// </summary>
 public class PlayerInfo
 {
     public InputDevice device;

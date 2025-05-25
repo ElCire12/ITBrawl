@@ -38,7 +38,7 @@ public class AirState : PlayerState
         {
             context.rb.velocity = Vector3.zero;
             context.rb.AddForce(new Vector2(0, 1 * context.jumpForce), ForceMode.Impulse);
-            SoundManager.Instance.PlaySound(context.jumpSound, true);
+            SoundManager.Instance.PlayRandomSound(context.jumpSounds);
             jumpsCount++;
             jumpNextFrame= false;   
         }

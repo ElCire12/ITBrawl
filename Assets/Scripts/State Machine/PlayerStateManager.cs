@@ -25,6 +25,7 @@ public class PlayerStateManager : MonoBehaviour
     [Header("PlayerState")]
     public string playerstate = "";
     public string previousState = "";
+    public GameObject playerWinPrefab;
 
     [Header("Input")]
     public Vector2 movementInput;
@@ -62,6 +63,8 @@ public class PlayerStateManager : MonoBehaviour
 
     [Header("Sounds")]
     public AudioClip jumpSound;
+    public AudioClip[] hittedSounds;
+    public AudioClip[] jumpSounds;
 
     public bool canAttack = true; 
     public bool canJump = true;
@@ -81,16 +84,15 @@ public class PlayerStateManager : MonoBehaviour
         basicAttackAction = playerInput.actions["BasicAttack"];
         jumpAction = playerInput.actions["Jump"];
         playerLiveScript = gameObject.GetComponent<PlayerLive>();
-
     }
 
     void OnEnable()
     {
         playerInput.actions.Enable();
         //jumpAction.Enable();
-        jumpAction.started += ctx => {
-            jumpStarted = true;
-        };
+        //jumpAction.started += ctx => {
+        //    jumpStarted = true;
+        //};
     }
 
     private void OnDisable()
@@ -121,14 +123,6 @@ public class PlayerStateManager : MonoBehaviour
 
         playerstate = currentState.ToString();
 
-        if (transform.position.y < -30f)
-        {
-            playerLiveScript.TakeDamage(15, 0); 
-            rb.velocity = Vector2.zero;
-            rb.angularVelocity = Vector2.zero;
-            rb.position = initialPosition;
-        }
-
         animator.SetBool("is_grounded", isGrounded);
 
         //MAIN PROGRAM
@@ -145,6 +139,12 @@ public class PlayerStateManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (transform.position.y < -30f)
+        {
+            playerLiveScript.TakeDamage(75, 0);
+            rb.velocity = Vector2.zero;
+            rb.position = initialPosition;
+        }
         currentState.FixedUpdate();
     }
 
@@ -177,7 +177,7 @@ public class PlayerStateManager : MonoBehaviour
             {
                 ChangeState("Jump");
             }
-            else if (Mathf.Abs(movementInput.x) > 0.3f)
+            else if (Mathf.Abs(movementInput.x) > 0.35f)
             {
                 ChangeState("Walking");
             }
@@ -204,6 +204,8 @@ public class PlayerStateManager : MonoBehaviour
         movementInput = movementAction.ReadValue<Vector2>();
         specialAttackPressed = specialAttackAction.IsPressed();
         basicAttackPressed = basicAttackAction.IsPressed();
+
+        jumpStarted = jumpAction.WasPressedThisFrame(); 
     }
 
     void ReadPlayerContext()
@@ -222,7 +224,7 @@ public class PlayerStateManager : MonoBehaviour
 
     void DeleteInputs()
     {
-        jumpStarted = false;
+        //jumpStarted = false;
     }
 
     public int GetActualPlayerDirection()

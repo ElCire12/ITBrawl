@@ -1,32 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Gestiona la instanciació dels jugadors a la escena de victòria.
-/// Situa els jugadors en el podi i activa una animació d'atac.
-/// </summary>
 public class WinSceneManager : MonoBehaviour
 {
     [Header("Posicions de spawn per al podi")]
     public Transform[] spawnPositions;
 
+    InputAction skipAction;
+    private float tiempoDesdeInicio;
+    public float tiempoMinimoAntesDeSaltar = 5f;
+
     private void Start()
     {
+        skipAction = new InputAction(type: InputActionType.Button);
+        skipAction.AddBinding("<Gamepad>/start");
+        skipAction.AddBinding("<Gamepad>/buttonSouth");
+        skipAction.AddBinding("<Keyboard>/enter");
+        skipAction.Enable();
+
+        tiempoDesdeInicio = 0f;
+
+        DynamicGI.UpdateEnvironment();
+
         // Instancia cada jugador en la seva posició corresponent al podi
-        for (int i = 0; i < GameManager.Instance.playersPodiumPositions.Count; i++)
+        for (int i = 0; i < GameInfo.Instance.playersPodiumPositions.Count; i++)
         {
-            GameObject playerPrefab = GameManager.Instance.playersPodiumPositions[i].character;
+            GameObject playerPrefab = GameInfo.Instance.playersPodiumPositions[i].character.GetComponent<PlayerStateManager>().playerWinPrefab;
             Transform spawnPosition = spawnPositions[i].transform;
 
-            // Instancia el personatge guanyador en la posició assignada
-            GameObject temp = Instantiate(playerPrefab, spawnPosition.position, spawnPosition.rotation);
+            GameObject temp = Instantiate(playerPrefab, spawnPosition.position, playerPrefab.transform.rotation);
+            temp.transform.eulerAngles = new Vector3(0f, 180f, 0f);
+        }
+    }
 
-            // Activa una animació o estat d'"atac" com a celebració
-            temp.GetComponent<PlayerStateManager>().isAttacking = true;
+    private void Update()
+    {
+        tiempoDesdeInicio += Time.deltaTime;
 
-            // Reorienta el jugador perquè miri cap endavant del podi
-            temp.transform.eulerAngles = new Vector3(0f, -270f, 0f);
+        if (tiempoDesdeInicio >= tiempoMinimoAntesDeSaltar && skipAction.triggered)
+        {
+            Destroy(GameInfo.Instance.gameObject);
+            SceneManager.LoadScene("StartScene");
         }
     }
 }

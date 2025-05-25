@@ -8,7 +8,6 @@ public class MartiAttacks : CharacterAttack
     [SerializeField] private int specialUpDamage;
     public float specialUpStunTime = 1f;
     public float gorraJumpForce;
-    public AudioClip[] specialUpSounds;
     public GameObject gorraPrefab;
     public GameObject gorraFake;
     public Collider specialUpHurtBox;
@@ -48,6 +47,11 @@ public class MartiAttacks : CharacterAttack
     public float basicUpRecoveryTime;
     public Transform basicUpAttackPosition;
 
+    [Header("Sounds")]
+    public AudioClip[] specialUpSounds;
+    public AudioClip[] specialDownSounds;
+    public AudioClip[] specialFrontSounds;
+
     [Header("General")]
     public LayerMask enemyLayer;
 
@@ -58,6 +62,7 @@ public class MartiAttacks : CharacterAttack
             context.isAttacking = true;
             context.rb.velocity = Vector2.zero;
             context.animator.CrossFadeInFixedTime("FrontSpecialAttack", 0f);
+            SoundManager.Instance.PlayRandomSound(specialFrontSounds);
 
             yield return new WaitForSeconds(0.18f + 0.25f);
 
@@ -84,6 +89,7 @@ public class MartiAttacks : CharacterAttack
             gorraFake.SetActive(true);
 
             yield return new WaitForSeconds(0.58f + 0.25f);
+            SoundManager.Instance.PlayRandomSound(specialUpSounds);
 
             gorraFake.SetActive(false);
             Instantiate(gorraPrefab, bocataSpawnPoint.position, gorraPrefab.transform.rotation);
@@ -91,7 +97,6 @@ public class MartiAttacks : CharacterAttack
 
             specialUpHurtBox.enabled = true;
             context.rb.AddForce(new Vector2(0, gorraJumpForce), ForceMode.Impulse);
-            SoundManager.Instance.PlayRandomSound(specialUpSounds);
 
             float timer = 0f;
             while (timer < upAttackMoveDuration)
@@ -130,6 +135,8 @@ public class MartiAttacks : CharacterAttack
             context.animator.CrossFadeInFixedTime("SpecialDown", 0f);
 
             yield return new WaitForSeconds(0.5f + 0.25f);
+
+            SoundManager.Instance.PlayRandomSound(specialDownSounds);
 
             legoParticles.transform.position = transform.position;
             legoParticles.Play();
@@ -208,7 +215,7 @@ public class MartiAttacks : CharacterAttack
         context.rb.constraints &= ~RigidbodyConstraints.FreezePositionY;
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(basicFrontAttackPosition.position, basicFrontAttackArea);

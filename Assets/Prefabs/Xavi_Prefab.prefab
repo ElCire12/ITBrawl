@@ -5084,6 +5084,8 @@ MonoBehaviour:
   playerNumberText: {fileID: 2771780394480511630}
   playerstate: 
   previousState: 
+  playerWinPrefab: {fileID: 8081864105207509633, guid: 8fccb0b73ec647949a08dc423bf30a07,
+    type: 3}
   movementInput: {x: 0, y: 0}
   specialAttackPressed: 0
   basicAttackPressed: 0
@@ -5108,6 +5110,17 @@ MonoBehaviour:
   rb: {fileID: 5530793871546325839}
   visuals: {fileID: 454738300138618892}
   jumpSound: {fileID: 8300000, guid: 9aa1b682e20e19d40a31590062f6b93c, type: 3}
+  hittedSounds:
+  - {fileID: 8300000, guid: 5c7415a7057627d42abff2d6e0db1077, type: 3}
+  - {fileID: 8300000, guid: 84e4c3ccdf955874a95eeb74f4651178, type: 3}
+  - {fileID: 8300000, guid: e64a804a96ba36748aa5847eb9006577, type: 3}
+  - {fileID: 8300000, guid: 6c467529b43b53442bbabb7310fa8b14, type: 3}
+  - {fileID: 8300000, guid: ea4986b1495b8154ebd17b48cc078e08, type: 3}
+  jumpSounds:
+  - {fileID: 8300000, guid: 03e2460fb3caa4a4ca3655167c226ed2, type: 3}
+  - {fileID: 8300000, guid: e648a4cdce5498146aabe53623f935f4, type: 3}
+  - {fileID: 8300000, guid: 43e402cc6d27c684aa5be891e9bc9f30, type: 3}
+  - {fileID: 8300000, guid: 0e384574db9b38c43a7cf67c8df952ab, type: 3}
   canAttack: 1
   canJump: 1
   isStunned: 0
@@ -5128,6 +5141,8 @@ MonoBehaviour:
   currentLive: 0
   context: {fileID: 4517308162649213434}
   healthBar: {fileID: 0}
+  PlayerProfilePicture: {fileID: 21300000, guid: ae402285e2a9e7142b172b7ba5ef16ed,
+    type: 3}
 --- !u!114 &-4993569272072958561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5143,7 +5158,6 @@ MonoBehaviour:
   specialUpDamage: 30
   specialUpStunTime: 0
   musicJumpForce: 150
-  specialUpSounds: []
   specialUpHurtBox: {fileID: 7964252843561618114}
   musicParticles: {fileID: 7057964644536010279}
   musicParticlesPosition: {fileID: 5134983280528322606}
@@ -5163,14 +5177,27 @@ MonoBehaviour:
   laserLine: {fileID: 907040433476272915}
   basicFrontAttackDamage: 15
   basicFrontStunTime: 0
-  basicFrontAttackArea: 0.5
+  basicFrontAttackArea: 1
   basicFrontRecoveryTime: 0.5
   basicAttackPosition: {fileID: 8884961842120949638}
   basicUpAttackDamage: 15
   basicUpStunTime: 1
   basicUpAttackArea: 0.5
   basicUpRecoveryTime: 0.2
-  basicUpAttackPosition: {fileID: 8884961842120949638}
+  basicUpAttackPosition: {fileID: 7067928547981673294}
+  specialUpSounds:
+  - {fileID: 8300000, guid: b9dcf8b6bfa226b4ca54152189a712ac, type: 3}
+  - {fileID: 8300000, guid: 21bf199d16a05784b90b6c6ebf24d7af, type: 3}
+  - {fileID: 8300000, guid: 05295a853ab44044a9b7c19ec5f59996, type: 3}
+  specialDownSounds:
+  - {fileID: 8300000, guid: 0af63fd887fcd5442bac51f0ef07fc08, type: 3}
+  - {fileID: 8300000, guid: 11b4198b612082240b747437c4dcee8f, type: 3}
+  - {fileID: 8300000, guid: 4779bb307f5a20e4c83bc8f9cd9cfa92, type: 3}
+  specialFrontSounds:
+  - {fileID: 8300000, guid: 6dddfab2fc7b20b44bdfadc877cc3238, type: 3}
+  - {fileID: 8300000, guid: 7c9c806743ff7534d9c84851b1ec0283, type: 3}
+  - {fileID: 8300000, guid: 1defa34819ab12e4cbc4bc4ca4b7ddcb, type: 3}
+  - {fileID: 8300000, guid: 702b6a6a1bced1d4a9d362e5c2991533, type: 3}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -10522,7 +10549,7 @@ Transform:
   m_GameObject: {fileID: 7033509230897513551}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.18333332, y: 0.81166655, z: 0.94166666}
+  m_LocalPosition: {x: 0.18, y: 0.81166655, z: 1.06}
   m_LocalScale: {x: 0.833333, y: 0.8333332, z: 0.833333}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15606,7 +15633,7 @@ Transform:
   m_GameObject: {fileID: 8133279156083785747}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.42830753, z: 0.95538515}
+  m_LocalPosition: {x: 0, y: 0.42830753, z: 0.55}
   m_LocalScale: {x: 0.923077, y: 0.923077, z: 0.923077}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15714,6 +15741,37 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1 &9218597923351246274
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7067928547981673294}
+  m_Layer: 0
+  m_Name: BasicUpPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7067928547981673294
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9218597923351246274}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.12, y: 1.72, z: 0.65}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 454738300138618892}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &127569111700629479
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15796,6 +15854,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 5134983280528322606}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4f4c4f7b9031da942819339d36348e9c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7067928547981673294}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4f4c4f7b9031da942819339d36348e9c,
         type: 3}

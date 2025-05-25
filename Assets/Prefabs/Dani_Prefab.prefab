@@ -159,6 +159,8 @@ MonoBehaviour:
   playerNumberText: {fileID: 9191229114065854885}
   playerstate: 
   previousState: 
+  playerWinPrefab: {fileID: 5316788183524482497, guid: 5a77d12b232e44243a370ca3006cd59a,
+    type: 3}
   movementInput: {x: 0, y: 0}
   specialAttackPressed: 0
   basicAttackPressed: 0
@@ -183,6 +185,18 @@ MonoBehaviour:
   rb: {fileID: 5530793871546325839}
   visuals: {fileID: 4493273848303868389}
   jumpSound: {fileID: 8300000, guid: 9aa1b682e20e19d40a31590062f6b93c, type: 3}
+  hittedSounds:
+  - {fileID: 8300000, guid: fbea7d29e5101064a97e3d9593d54734, type: 3}
+  - {fileID: 8300000, guid: d1e87a598335bf3489a26a303b008818, type: 3}
+  - {fileID: 8300000, guid: b1f5e30ed68038b47985f08feecc5c6f, type: 3}
+  - {fileID: 8300000, guid: a9d4df4d98bc8b042aba1bf5f49671a3, type: 3}
+  jumpSounds:
+  - {fileID: 8300000, guid: e516aa1ec4bdb0c46a440a2c30c5372e, type: 3}
+  - {fileID: 8300000, guid: 3c480278c7cc96743833d4d462a73783, type: 3}
+  - {fileID: 8300000, guid: 3118cb4d015ca2147bf4575c2cd2291e, type: 3}
+  - {fileID: 8300000, guid: f6fce2de23c51f9479be0c99337d724c, type: 3}
+  - {fileID: 8300000, guid: aab5f1b7e3aef3b459a6adba38b3e376, type: 3}
+  - {fileID: 8300000, guid: a2b1a0def36ecb54e8a83d63b1eca3d7, type: 3}
   canAttack: 1
   canJump: 1
   isStunned: 0
@@ -198,10 +212,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a744924e27c7e343a87655527fc2115, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gorraJumpForce: 150
+  specialUpJumpForce: 175
   specialUpDamage: 15
   specialUpHurtBox: {fileID: 7964252843561618114}
-  specialUpSounds: []
   specialUpStunTime: 1
   specialUpDuration: 1
   upAttackAirAcceleration: 5
@@ -215,21 +228,34 @@ MonoBehaviour:
   specialFrontDamage: 20
   specialFrontStunTime: 0.5
   grabDuration: 2
-  grabRadius: 1.5
+  didntGrabAPlayerRecoveryTime: 2
+  grabRadius: 0.6
   grabFollowPoint: {fileID: 5567808724403669215}
   grabDamage: 30
   grabStunTime: 1.5
-  grabPosition: {fileID: 5567808724403669215}
+  grabPosition: {fileID: 335408732853287741}
   basicFrontAttackDamage: 15
   basicFrontStunTime: 1
-  basicFrontAttackArea: 0.5
+  basicFrontAttackArea: 0.75
   basicFrontRecoveryTime: 0.2
   basicFrontAttackPosition: {fileID: 7157079585924716145}
   basicUpAttackDamage: 0
   basicUpStunTime: 1
-  basicUpAttackArea: 0
+  basicUpAttackArea: 0.5
   basicUpRecoveryTime: 0.5
-  basicUpAttackPosition: {fileID: 7157079585924716145}
+  basicUpAttackPosition: {fileID: 6386442626260330431}
+  specialUpSounds:
+  - {fileID: 8300000, guid: 4bcc3a10433298c49b1ff1d7b82cf2cf, type: 3}
+  - {fileID: 8300000, guid: 3a29888e76f8ee548a189c8958c77fa2, type: 3}
+  - {fileID: 8300000, guid: d78a9832dfb78bd47bfe7db03e5d5519, type: 3}
+  specialDownSounds:
+  - {fileID: 8300000, guid: 4d50bcb05cd21704fb90108790caf596, type: 3}
+  - {fileID: 8300000, guid: f45dcb9a49b025a4c825ed480923077d, type: 3}
+  - {fileID: 8300000, guid: 0e6dc6ce6e889cd4ea616dccb0af8cef, type: 3}
+  specialFrontSounds:
+  - {fileID: 8300000, guid: b2c619e8c4b6561409cd097a1719fe57, type: 3}
+  - {fileID: 8300000, guid: 1d3ee70ad10c8ed4faa52a12c5e09bcf, type: 3}
+  - {fileID: 8300000, guid: 3ff16a92fcc5bfd44a755ce62de3b517, type: 3}
   stunTime: 1
   enemyLayer:
     serializedVersion: 2
@@ -251,6 +277,8 @@ MonoBehaviour:
   currentLive: 0
   context: {fileID: 4517308162649213434}
   healthBar: {fileID: 0}
+  PlayerProfilePicture: {fileID: 21300000, guid: bcac6f90c0da6fd45bd5c83f12a4522a,
+    type: 3}
 --- !u!114 &327610043922249304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -381,7 +409,7 @@ Transform:
   m_GameObject: {fileID: 2536686526588914213}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.839, z: 0.72}
+  m_LocalPosition: {x: -0, y: 0.839, z: 1.35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5538,6 +5566,68 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &7884043411866225511
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 335408732853287741}
+  m_Layer: 0
+  m_Name: GrabAreaPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &335408732853287741
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7884043411866225511}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0.521, z: 0.848}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4493273848303868389}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8016115532785606916
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6386442626260330431}
+  m_Layer: 3
+  m_Name: BasicUpPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6386442626260330431
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8016115532785606916}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -0.12000002, y: 1.7200003, z: 0.6500001}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4493273848303868389}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4166368138051010062
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5646,6 +5736,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 7157079585924716145}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ed7c50200cf2a1942b647099d9acdc8b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6386442626260330431}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ed7c50200cf2a1942b647099d9acdc8b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 335408732853287741}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ed7c50200cf2a1942b647099d9acdc8b,
         type: 3}

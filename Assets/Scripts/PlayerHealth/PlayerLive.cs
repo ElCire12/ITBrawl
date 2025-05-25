@@ -9,11 +9,17 @@ public class PlayerLive : MonoBehaviour
     public int maxLive;
     public int currentLive;
     public PlayerStateManager context;
-    public Image healthBar; 
+    public Image healthBar;
+    public Sprite PlayerProfilePicture;
 
     private void Awake()
     {
         currentLive = maxLive;
+    }
+
+    private void OnEnable()
+    {
+        
     }
 
     public void Heal(int liveAmount)
@@ -28,6 +34,7 @@ public class PlayerLive : MonoBehaviour
 
     public void TakeDamage(int liveAmount, float stunTime = 0, Transform attackerPosition = null)
     {
+        SoundManager.Instance.PlayRandomSound(context.hittedSounds);
         context.ApplyStun(stunTime);
 
         if (attackerPosition != null) {
@@ -37,6 +44,7 @@ public class PlayerLive : MonoBehaviour
 
             context.visuals.eulerAngles = new Vector3(0f, 90f * -direction, 0f);
 
+            context.rb.velocity = Vector3.zero;
             context.rb.AddForce(new Vector2(direction * 300, 1 * 50), ForceMode.Impulse);
         }
 
@@ -62,8 +70,12 @@ public class PlayerLive : MonoBehaviour
 
     void Die()
     {
+        SupCam2.Instance.players.Remove(this.gameObject);
 
-        GameManager.Instance.playersPodiumPositions.Insert(0, context.playerInfo);
+        if (GamePlaySceneManager.Instance.numberOfPlayersDied >= GameInfo.Instance.players.Count - 1 == false)
+        {
+            GameInfo.Instance.playersPodiumPositions.Insert(0, context.playerInfo);
+        }
 
         GameObject temp = Instantiate(diePartycles.gameObject, transform.position, Quaternion.identity);
         temp.GetComponent<ParticleSystem>().Play();
