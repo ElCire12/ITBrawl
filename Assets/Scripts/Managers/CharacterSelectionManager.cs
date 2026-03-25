@@ -19,7 +19,7 @@ public class CharacterSelectionManager : MonoBehaviour
     [Header("Start UI")]
     public GameObject startUi;
     public VideoPlayer videoPlayer;
-    public RawImage videoImage; 
+    public RawImage videoImage;
 
     [Header("Num Players Selection UI")]
     public GameObject numPlayersSelectionUi;
@@ -36,7 +36,10 @@ public class CharacterSelectionManager : MonoBehaviour
     public Button firstSelectedButtonInCharacterSelection;
 
     [Header("Splash Auto Transition")]
-    public float splashDuration = 5f; // Tiempo de espera para transición automática
+    public float splashDuration = 5f;
+
+    [Header("Audio")]
+    public AudioSource backgroundMusic;
 
     private InputAction joinAction;
     private InputAction skipStartAction;
@@ -110,6 +113,9 @@ public class CharacterSelectionManager : MonoBehaviour
                 videoPlayer.enabled = false;
                 startUi.SetActive(false);
                 numPlayersSelectionUi.SetActive(true);
+
+                if (backgroundMusic != null && !backgroundMusic.isPlaying)
+                    backgroundMusic.Play();
             }
         }
 
@@ -122,6 +128,17 @@ public class CharacterSelectionManager : MonoBehaviour
                 startUi.SetActive(true);
                 videoPlayer.enabled = true;
                 numPlayersSelectionUi.SetActive(false);
+
+                // Detener música
+                if (backgroundMusic != null && backgroundMusic.isPlaying)
+                    backgroundMusic.Stop();
+
+                // Restaurar alpha del video
+                if (videoImage != null)
+                {
+                    var c = videoImage.color;
+                    videoImage.color = new Color(c.r, c.g, c.b, 1f);
+                }
             }
         }
 
@@ -170,14 +187,15 @@ public class CharacterSelectionManager : MonoBehaviour
     {
         yield return new WaitForSeconds(splashDuration);
 
-        // Fade out del video
-        yield return StartCoroutine(FadeOutVideo(1.5f)); // 1 segundo de duración del fade
+        yield return StartCoroutine(FadeOutVideo(1f));
 
-        // Transición al siguiente estado
         currrentSelectingState = selectingStates.numPlayersSelecion;
         videoPlayer.enabled = false;
         startUi.SetActive(false);
         numPlayersSelectionUi.SetActive(true);
+
+        if (backgroundMusic != null && !backgroundMusic.isPlaying)
+            backgroundMusic.Play();
     }
 
     IEnumerator FadeOutVideo(float duration)
