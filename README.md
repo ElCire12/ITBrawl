@@ -1,93 +1,72 @@
-# ITBrawl
+# 🥊 ITBrawl - Unity 3D Brawler
 
+[![Unity](https://img.shields.io/badge/Unity-100000?style=for-the-badge&logo=unity&logoColor=white)](https://unity.com/)
+[![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white)](https://docs.microsoft.com/en-us/dotnet/csharp/)
 
+> Un videojuego de lucha 3D desarrollado en Unity que implementa una arquitectura robusta basada en **Máquinas de Estados (State Machines)** para el control de personajes.
 
-## Getting started
+## 🚀 Sobre el Proyecto
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+**ITBrawl** es un proyecto desarrollado por el equipo InTerBits. El objetivo principal ha sido crear un brawler (juego de lucha) funcional desde cero, abarcando las fases clave del desarrollo de un videojuego: desde el modelado 3D y la integración de audio personalizado, hasta la programación de físicas, combates y estados de los personajes.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Este repositorio contiene el código fuente íntegro del proyecto en Unity.
 
-## Add your files
+## 💻 Arquitectura y Habilidades Técnicas
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+Este código demuestra la aplicación de buenas prácticas de programación y conocimientos avanzados en el ecosistema de Unity:
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/eric2253542/itbrawl.git
-git branch -M main
-git push -uf origin main
-```
+### 1. Programación Orientada a Objetos y Patrones de Diseño (C#)
+El control de los personajes se ha construido utilizando el **Patrón de Diseño State Machine**. Esto garantiza un código limpio, escalable y mantenible, evitando las tradicionales y propensas a errores cadenas de `if/else` en el `Update`.
+* **`PlayerStateManager.cs`**: Gestor principal (Contexto) que controla las transiciones entre estados.
+* **Estados modulares**: Implementación de clases independientes y desacopladas para cada comportamiento del jugador (`IdleState.cs`, `WalkingState.cs`, `JumpState.cs`, `AirState.cs`, `AttackingState.cs`).
+* **Sistema de Combate**: Gestión precisa de hitboxes y cálculo de daño a través del script `CharacterAttacks.cs`.
 
-## Integrate with your tools
+### 2. Desarrollo e Integración en Unity
+* **Integración 3D**: Uso de modelos 3D y creación de entornos personalizados (Mapa Nuvulet).
+* **Sistemas de Animación**: Uso del componente `Animator` y sincronización directa de las animaciones con la Máquina de Estados por código.
+* **Diseño y Gestión de Audio**: Implementación de `AudioSources` para efectos de sonido dinámicos y diálogos grabados en estudio, diseñados para ofrecer *game feel* y retroalimentación al jugador durante los combates.
 
-- [ ] [Set up project integrations](https://gitlab.com/eric2253542/itbrawl/-/settings/integrations)
+## 📜 Descripción de Scripts Principales
 
-## Collaborate with your team
+A continuación se detallan los scripts fundamentales que componen el núcleo del juego:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### ⚙️ Gestor Principal y Plantillas
+* **`PlayerStateManager.cs`**: Script principal (Contexto) de la máquina de estados. Lee los *inputs* del jugador y el entorno (ej. detectar el suelo mediante RayCast) para decidir el estado actual del personaje y ejecutar transiciones.
+* **`PlayerState.cs`**: Clase base de la que heredan todos los estados. Define las funciones obligatorias que deben implementar (`Enter()`, `Exit()`, `Update()`, `FixedUpdate()`).
+* **`CharacterAttacks.cs`**: Clase abstracta/plantilla que define las funciones de ataque. Permite aplicar polimorfismo para que cada luchador tenga su propia lógica de daño.
 
-## Test and Deploy
+### 🚶‍♂️ Estados del Jugador (State Machine)
+* **`WalkingState.cs`**: Lógica de movimiento en el suelo. Aplica fuerzas según el *joystick*, controla la aceleración, limita la velocidad máxima y gestiona los giros.
+* **`AirState.cs`**: Control aéreo. Gestiona la lógica del doble salto y añade gravedad extra para mejorar la sensación de las caídas.
+* **`JumpState.cs`**: Aplica un impulso vertical al entrar en el estado para realizar el salto.
+* **`IdleState.cs`**: Estado de reposo. Su función principal es desacelerar la velocidad del jugador hasta que se detiene por completo.
+* **`AttackingState.cs`**: Ejecuta los ataques. Lee la dirección del *joystick* y llama a la función de ataque correspondiente en el script del personaje.
+* **`StunnedState.cs`**: Estado de aturdimiento. Retira el control al jugador al recibir daño, reproduce la animación de impacto y devuelve al jugador al estado *Idle* tras una corrutina.
 
-Use the built-in continuous integration in GitLab.
+### ⚔️ Lógica de Personajes y Vida
+* **`PlayerLive.cs`**: Sistema de salud del jugador. Gestiona la recepción de daño (`TakeDamage()`), curación (`Heal()`), actualización de la interfaz de usuario (UI) y la muerte del personaje (`Die()`). También aplica retroceso (knockback) al recibir un golpe.
+* **`MartiAttacks.cs` / `XaviAttacks.cs` / `DaniAttacks.cs`**: Scripts que heredan de `CharacterAttacks.cs`. Contienen la lógica específica, efectos y *hitboxes* de los ataques únicos de cada personaje.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## 📸 Galería y Demostración
 
-***
+* `![Gameplay](ruta-al-gif-animado)`
+* `![Estructura del State Machine](ruta-a-captura-de-codigo-limpio)`
 
-# Editing this README
+## 🛠️ Instalación y Ejecución
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Para explorar el código o probar el proyecto en un entorno local:
 
-## Suggestions for a good README
+1. Clona este repositorio:
+   ```bash
+   git clone https://github.com/ElCire12/ITBrawl.git
+   ```
+2. Abre el proyecto utilizando **Unity Hub** (Versión de Unity`2022.3.46f1`).
+3. Navega a la carpeta `Scenes` y abre la escena principal (`MainScene.unity`).
+4. Pulsa **Play** en el editor para iniciar el juego.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## 👨‍💻 Autores
 
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+**InTerBits Team**
+* **Èric Moral Pereira** - *Programación en C# / Unity* - [LinkedIn](https://www.linkedin.com/in/eric-moral-pereira) | [GitHub](https://github.com/ElCire12/)
+* Albert Domingo Montemar
+* Martí Del Valle Gonzalez
