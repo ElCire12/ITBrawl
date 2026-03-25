@@ -67,6 +67,6 @@ Para explorar el código o probar el proyecto en un entorno local:
 ## 👨‍💻 Autores
 
 **InTerBits Team**
-* **Èric Moral Pereira** - *Programación en C# / Unity* - [LinkedIn](www.linkedin.com/in/eric-moral-pereira) | [GitHub](https://github.com/ElCire12/)
+* **Èric Moral Pereira** - *Programación en C# / Unity* - [LinkedIn](https://www.linkedin.com/in/eric-moral-pereira) | [GitHub](https://github.com/ElCire12/)
 * Albert Domingo Montemar
 * Martí Del Valle Gonzalez
