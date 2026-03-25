@@ -1,19 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerLive : MonoBehaviour
 {
+    public ParticleSystem diePartycles;
     public int maxLive;
     public int currentLive;
-    public PlayerStateManager playerStateManager;
-    public Image healthBar; 
+    public PlayerStateManager context;
+    public Image healthBar;
+    public Sprite PlayerProfilePicture;
 
     private void Awake()
     {
         currentLive = maxLive;
+    }
+
+    private void OnEnable()
+    {
+        
     }
 
     public void Heal(int liveAmount)
@@ -28,16 +34,18 @@ public class PlayerLive : MonoBehaviour
 
     public void TakeDamage(int liveAmount, float stunTime = 0, Transform attackerPosition = null)
     {
-        playerStateManager.ApplyStun(stunTime);
+        SoundManager.Instance.PlayRandomSound(context.hittedSounds);
+        context.ApplyStun(stunTime);
 
         if (attackerPosition != null) {
             
             float direction;
             if (attackerPosition.position.x < transform.position.x) direction = 1; else direction = -1;
 
-            playerStateManager.visuals.eulerAngles = new Vector3(0f, 90f * -direction, 0f);
+            context.visuals.eulerAngles = new Vector3(0f, 90f * -direction, 0f);
 
-            playerStateManager.rb.AddForce(new Vector2(direction * 300, 1 * 50), ForceMode.Impulse);
+            context.rb.velocity = Vector3.zero;
+            context.rb.AddForce(new Vector2(direction * 300, 1 * 50), ForceMode.Impulse);
         }
 
         if ((currentLive - liveAmount) <= 0f) //Comprobar si ha deixat sense vida al jugador
@@ -62,6 +70,19 @@ public class PlayerLive : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("Player Died"); 
+        SupCam2.Instance.players.Remove(this.gameObject);
+
+        if (GamePlaySceneManager.Instance.numberOfPlayersDied >= GameInfo.Instance.players.Count - 1 == false)
+        {
+            GameInfo.Instance.playersPodiumPositions.Insert(0, context.playerInfo);
+        }
+
+        GameObject temp = Instantiate(diePartycles.gameObject, transform.position, Quaternion.identity);
+        temp.GetComponent<ParticleSystem>().Play();
+
+        this.gameObject.SetActive(false);
+        context.playerInfo.hasDied = true;
+
+        GamePlaySceneManager.Instance.numberOfPlayersDied++;
     }
 }

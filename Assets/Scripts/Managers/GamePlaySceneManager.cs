@@ -1,64 +1,152 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// Controlador principal de l'escena de joc: gestiona la instanciaciï¿½ de jugadors,
+/// configuraciï¿½ de cï¿½mera, barres de vida i la transiciï¿½ cap a l'escena de victï¿½ria.
+/// </summary>
 public class GamePlaySceneManager : MonoBehaviour
 {
-    public Image[] healthBars; 
+    public static GamePlaySceneManager Instance { get; private set; }
 
-    public List<GameObject> playersObjects = new List<GameObject>();
+    [Header("UI")]
+    public Image[] healthBars;
+    public Image[] profileImages;
+
+    [Header("Gameplay")]
+    public List<Transform> spawnPoints;
+    public List<GameObject> playersGameplaySceneObjects = new List<GameObject>();
+    public int numberOfPlayersDied = 0;
+
+    [Header("Referï¿½ncies externes")]
+    public SupCam2 camera;
 
     int playerIndex;
 
+    void Awake()
+    {
+        // Assegura que nomï¿½s hi hagi una instï¿½ncia d'aquest script (patrï¿½ Singleton)
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
     void Start()
     {
-        if (healthBars == null) Debug.Log("healthBars es null");
+        // Actualitza la ilï¿½luminaciï¿½ global
         DynamicGI.UpdateEnvironment();
-        //foreach (var healthbar in healthBars)
-        //{
-        //    healthbar.gameObject.transform.parent.gameObject.SetActive(false);
-        //}
 
+        // Activa tots els dispositius d'entrada (per si algun s'ha desactivat)
         foreach (var device in InputSystem.devices)
         {
             InputSystem.EnableDevice(device);
         }
 
-        foreach (var player in GameManager.Instance.players)
+        int spawnIndex = 0;
+        foreach (var player in GameInfo.Instance.players)
         {
+            // Detecta el tipus de dispositiu del jugador
             string scheme = player.device is Gamepad ? "Gamepad" : "Keyboard";
 
+            // Instï¿½ncia del jugador amb el seu esquema de control
             PlayerInput temp = PlayerInput.Instantiate(
                 player.character,
                 controlScheme: scheme,
                 pairWithDevice: player.device
             );
 
-            playersObjects.Add(temp.gameObject); // ahora funciona
+            // Guarda una referï¿½ncia al component PlayerStateManager
+            PlayerStateManager stateManager = temp.GetComponent<PlayerStateManager>();
 
-            Debug.Log($"Añadiendo healthbar al jugador {playersObjects[playerIndex]}");
+            // Situa el jugador en el punt d'apariciï¿½ corresponent
+            stateManager.rb.position = spawnPoints[spawnIndex].position;
+            stateManager.visuals.eulerAngles = new Vector3(0, spawnPoints[spawnIndex].eulerAngles.y, 0);
 
-            PlayerLive playerLive = playersObjects[playerIndex].GetComponent<PlayerLive>();
-            if (playerLive == null) Debug.Log("playerLive es null"); 
-            AssignHealthBar(healthBars[playerIndex],playerLive);
+            // Assigna la informaciï¿½ del jugador i la seva UI
+            stateManager.playerInfo = player;
+            stateManager.playerNumberText.text = $"P{playerIndex + 1}";
+
+            // Afegeix el jugador a les llistes de seguiment i control de cï¿½mera
+            playersGameplaySceneObjects.Add(temp.gameObject);
+            camera.players.Add(temp.gameObject);
+
+            // Assigna la barra de vida del jugador
+            PlayerLive playerLive = temp.GetComponent<PlayerLive>();
+            if (playerLive == null)
+                Debug.LogWarning("playerLive ï¿½s null");
+
+            AssignHealthBar(healthBars[playerIndex], playerLive, profileImages[playerIndex]);
 
             playerIndex++;
+            spawnIndex++;
         }
     }
 
-    void AssignHealthBar(Image healthBar, PlayerLive player)
+    bool hasBeenSelectedWinner = false;
+
+    private void Update()
     {
-        // Asegúrate de que el GameObject tiene un componente Image
-        healthBar.gameObject.transform.parent.gameObject.SetActive(true);
+        // Comprova si nomï¿½s queda un jugador viu
+        if (numberOfPlayersDied >= GameInfo.Instance.players.Count - 1 && !hasBeenSelectedWinner)
+        {
+            PlayerInfo winner = null;
+
+            foreach (var player in GameInfo.Instance.players)
+            {
+                if (!player.hasDied)
+                {
+                    winner = player;
+                    GameInfo.Instance.playersPodiumPositions.Insert(0, winner);
+                    hasBeenSelectedWinner = true;
+                    break; // Ja s'ha trobat el guanyador
+                }
+            }
+
+            Debug.LogWarning($"El guanyador ï¿½s {winner.character.gameObject.name} amb el dispositiu {winner.device.name} i playerIndex {winner.playerIndex}");
+
+            StartCoroutine(WinSceneTransition());
+        }
+    }
+
+    /// <summary>
+    /// Fa una pausa breu en cï¿½mera lenta abans de carregar l'escena de victï¿½ria.
+    /// </summary>
+    IEnumerator WinSceneTransition()
+    {
+        Time.timeScale = 0.3f;
+        yield return new WaitForSecondsRealtime(2f);
+        Time.timeScale = 1;
+
+        Destroy(this.gameObject); // Evita duplicats si es torna a aquesta escena
+        SceneManager.LoadScene("WinScene");
+    }
+
+    /// <summary>
+    /// Associa la barra de vida del jugador amb el seu component de UI.
+    /// </summary>
+    void AssignHealthBar(Image healthBar, PlayerLive player, Image profileImage)
+    {
+        // Assegura que la barra i el seu contenidor estiguin actius
+        healthBar.transform.parent.gameObject.SetActive(true);
         Image healthBarImage = healthBar.GetComponent<Image>();
         if (healthBarImage != null)
         {
             player.healthBar = healthBarImage;
+            profileImage.sprite = player.PlayerProfilePicture;
         }
         else
         {
-            Debug.LogWarning("El GameObject no tiene un componente Image.");
+            Debug.LogWarning("El GameObject no tï¿½ un component Image.");
         }
     }
 }

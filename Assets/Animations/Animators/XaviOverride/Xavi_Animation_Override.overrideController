@@ -9,23 +9,19 @@ AnimatorOverrideController:
   m_Name: Xavi_Animation_Override
   m_Controller: {fileID: 9100000, guid: 95d16574263ec0d4985ef3155b52d43a, type: 2}
   m_Clips:
-  - m_OriginalClip: {fileID: -7703716553714274601, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
-      type: 3}
-    m_OverrideClip: {fileID: -3700129553153498348, guid: 4f4c4f7b9031da942819339d36348e9c,
-      type: 3}
-  - m_OriginalClip: {fileID: 1185065713615557994, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
-      type: 3}
-    m_OverrideClip: {fileID: 1185065713615557994, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
-      type: 3}
-  - m_OriginalClip: {fileID: -1812440172805321714, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
-      type: 3}
-    m_OverrideClip: {fileID: 6623058033687575326, guid: 4f4c4f7b9031da942819339d36348e9c,
-      type: 3}
-  - m_OriginalClip: {fileID: -6183346920880654375, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
-      type: 3}
-    m_OverrideClip: {fileID: -6183346920880654375, guid: 0cd4a30f31da32c42b05fe688dc1ae12,
-      type: 3}
   - m_OriginalClip: {fileID: -1732268767278250924, guid: 0b03a8dd8e69ab945b98cda527dd5c5f,
       type: 3}
     m_OverrideClip: {fileID: 7467048034096092654, guid: 4f4c4f7b9031da942819339d36348e9c,
+      type: 3}
+  - m_OriginalClip: {fileID: 7609604593685395993, guid: 0b03a8dd8e69ab945b98cda527dd5c5f,
+      type: 3}
+    m_OverrideClip: {fileID: -3700129553153498348, guid: 4f4c4f7b9031da942819339d36348e9c,
+      type: 3}
+  - m_OriginalClip: {fileID: -1237650253582119680, guid: 0b03a8dd8e69ab945b98cda527dd5c5f,
+      type: 3}
+    m_OverrideClip: {fileID: 6623058033687575326, guid: 4f4c4f7b9031da942819339d36348e9c,
+      type: 3}
+  - m_OriginalClip: {fileID: -3559621968715542498, guid: 0b03a8dd8e69ab945b98cda527dd5c5f,
+      type: 3}
+    m_OverrideClip: {fileID: -1151028283920862013, guid: 4f4c4f7b9031da942819339d36348e9c,
       type: 3}
