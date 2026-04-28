@@ -68,5 +68,5 @@ Para explorar el código o probar el proyecto en un entorno local:
 
 **InTerBits Team**
 * **Èric Moral Pereira** - *Programación en C# / Unity* - [LinkedIn](https://www.linkedin.com/in/eric-moral-pereira) | [GitHub](https://github.com/ElCire12/)
-* Albert Domingo Montemar
-* Martí Del Valle Gonzalez
+* Martí Del Valle Gonzalez (Arte 3D)
+* Albert Domingo Montemar (Diseño)
