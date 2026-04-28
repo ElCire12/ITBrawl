@@ -11,6 +11,8 @@
 
 Este repositorio contiene el código fuente íntegro del proyecto en Unity.
 
+ ## [JUEGA](https://elcire12.itch.io/itbrawl)
+
 ## 💻 Arquitectura y Habilidades Técnicas
 
 Este código demuestra la aplicación de buenas prácticas de programación y conocimientos avanzados en el ecosistema de Unity:
